@@ -16,7 +16,7 @@ let isAlreadyFetchingAccessToken = false
 let subscribers = []
 
 const axiosIns = axios.create({
-	baseURL: import.meta.env.VITE_BACKEND,
+	baseURL: import.meta.env.VITE_API_URL,
 	timeout: 20000
 })
 
