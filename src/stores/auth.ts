@@ -28,9 +28,7 @@ export const useAuthStore = defineStore('auth', {
 					.then(res => {
 						resolve(res)
 					})
-					.catch(err => {
-						reject(err)
-					})
+					.catch(err => reject(err))
 			})
 		},
 		confirmOtp(params: {
@@ -43,9 +41,7 @@ export const useAuthStore = defineStore('auth', {
 					.then(res => {
 						resolve(res)
 					})
-					.catch(err => {
-						reject(err)
-					})
+					.catch(err => reject(err))
 			})
 		},
 		refreshToken(params: {
@@ -57,9 +53,7 @@ export const useAuthStore = defineStore('auth', {
 					.then(res => {
 						resolve(res)
 					})
-					.catch(err => {
-						reject(err)
-					})
+					.catch(err => reject(err))
 			})
 		},
 		updateEmail(params: {
@@ -72,9 +66,7 @@ export const useAuthStore = defineStore('auth', {
 					.then(res => {
 						resolve(res)
 					})
-					.catch(err => {
-						reject(err)
-					})
+					.catch(err => reject(err))
 			})
 		},
 		updatePhone(params: {
@@ -87,9 +79,7 @@ export const useAuthStore = defineStore('auth', {
 					.then(res => {
 						resolve(res)
 					})
-					.catch(err => {
-						reject(err)
-					})
+					.catch(err => reject(err))
 			})
 		}
 	}

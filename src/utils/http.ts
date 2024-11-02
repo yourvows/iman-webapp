@@ -16,7 +16,7 @@ let isAlreadyFetchingAccessToken = false
 let subscribers = []
 
 const axiosIns = axios.create({
-	baseURL: import.meta.env.VITE_API_URL,
+	baseURL: '/api',
 	timeout: 20000
 })
 
@@ -38,13 +38,13 @@ axiosIns.interceptors.request.use(
 //404 or 401 pages use this response
 axiosIns.interceptors.response.use(
 	response => response,
-	error => {
-		const { config, response } = error
+	er => {
+		const { config, response: error } = err
 		const originalRequest = config
 
 		if (
-			response &&
-			response.status === StatusCode.Unauthorized &&
+			error &&
+			error.status === StatusCode.Unauthorized &&
 			window.location.pathname !== '/login'
 		) {
 			if (!isAlreadyFetchingAccessToken) {
@@ -73,15 +73,15 @@ axiosIns.interceptors.response.use(
 				})
 			})
 			return retryOriginalRequest
-		} else if (response.status === StatusCode.UnprocessableEntity) {
-			if (response && response.data && response.data.message) {
-				console.log(response.data.message)
+		} else if (error.status === StatusCode.UnprocessableEntity) {
+			if (error && error.data && error.data.message) {
+				console.log(error.data.message)
 			}
-		} else if (response.status === StatusCode.BadRequest) {
-			if (response && response.data && response.data.message) {
-				console.log(response.data.message)
+		} else if (error.status === StatusCode.BadRequest) {
+			if (error && error.data && error.data.message) {
+				console.log(error.data.message)
 			}
-		} else if (response.status === StatusCode.InternalServerError) {
+		} else if (error.status === StatusCode.InternalServerError) {
 		}
 		return Promise.reject(error)
 	}
