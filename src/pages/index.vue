@@ -11,7 +11,7 @@ const refreshToken = ref<string | null>(null)
 
 function redirectToRegister() {
 	const timer = setTimeout(() => {
-		router.push('/registration/pin')
+		router.push('/auth/login')
 	}, 1000)
 
 	return () => clearTimeout(timer)
@@ -19,7 +19,7 @@ function redirectToRegister() {
 
 function redirectToPin() {
 	const timer = setTimeout(() => {
-		router.push('/login/pin')
+		router.push('/auth/pin')
 	}, 1000)
 
 	return () => clearTimeout(timer)
@@ -50,22 +50,13 @@ onMounted(() => {
 </script>
 
 <template>
-	<div class="container">
+	<div class="splash">
 		<SplashScreen />
 	</div>
 </template>
 
-<style lang="scss" scoped>
-.container {
-	z-index: 200;
-	width: 100%;
-	height: 100%;
-	background-color: white;
-	position: fixed;
-	top: 0;
-	left: 0;
-	display: flex;
-	align-items: center;
-	justify-content: center;
+<style lang="postcss" scoped>
+.splash {
+	@apply z-[200] w-full h-full bg-white fixed top-0 left-0 flex items-center justify-center;
 }
 </style>

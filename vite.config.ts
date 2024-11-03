@@ -3,11 +3,18 @@ import vue from '@vitejs/plugin-vue'
 import svgLoader from 'vite-svg-loader'
 import path from 'path'
 import dotenv from 'dotenv'
+import autoprefixer from 'autoprefixer'
+import tailwind from 'tailwindcss'
 
 dotenv.config()
 
 // https://vite.dev/config/
 export default defineConfig({
+	css: {
+		postcss: {
+			plugins: [tailwind(), autoprefixer()]
+		}
+	},
 	plugins: [vue(), svgLoader()],
 	server: {
 		proxy: {

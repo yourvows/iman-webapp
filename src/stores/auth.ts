@@ -13,10 +13,14 @@ export const useAuthStore = defineStore('auth', {
 	state: () => ({
 		accessToken: localStorage.getItem('accessToken') || '',
 		refreshToken: localStorage.getItem('refreshToken') || '',
-		userData: localStorage.getItem('userData') || ''
+		userData: localStorage.getItem('userData') || '',
+		phoneNumber: ''
 	}),
 	getters: {},
 	actions: {
+		setPhoneNumber(phoneNumber: string) {
+			this.phoneNumber = phoneNumber
+		},
 		sendOtp(params: {
 			auth_type: AuthType
 			phone_number?: string
@@ -24,7 +28,12 @@ export const useAuthStore = defineStore('auth', {
 		}): Promise<ISendOtpResponse> {
 			return new Promise((resolve, reject) => {
 				http
-					.post('/investor/send-otp', params)
+					.post('/investor/send-otp', params, {
+						headers: {
+							'Otp-Secret':
+								'SU1BTl9JTlZFU1Q6OGRhYTY3ZGMtYjdlZi00NjAwLThmOWMtNzRhODAxZTQ5NDcy'
+						}
+					})
 					.then(res => {
 						resolve(res)
 					})
