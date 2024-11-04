@@ -7,7 +7,7 @@ import { markRaw, ref } from 'vue'
 
 const components = ref([markRaw(PhoneNumber), markRaw(Confirm), markRaw(Pin)])
 
-let currentComponent = ref(components.value[2])
+let currentComponent = ref(components.value[0])
 const step = ref(0)
 
 function createStepManager() {
