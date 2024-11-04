@@ -4,13 +4,18 @@ import { loadLayoutMiddleware } from '@/middleware'
 const routes = [
 	{
 		path: '/',
-		name: 'Home',
+		name: 'index',
 		component: () => import('@/pages/index.vue')
 	},
 	{
 		path: '/auth/login',
 		name: 'Number',
 		component: () => import('@/pages/auth/index.vue')
+	},
+	{
+		path: '/auth/pin',
+		name: 'Pin',
+		component: () => import('@/pages/auth/Pin.vue')
 	},
 	{
 		path: '/home',

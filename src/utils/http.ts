@@ -2,15 +2,7 @@
 import axios from 'axios'
 
 import { getCookie, setCookie } from '@/utils/cookie.ts'
-
-const enum StatusCode {
-	OK = 200,
-	Unauthorized = 401,
-	NotFound = 404,
-	BadRequest = 400,
-	UnprocessableEntity = 422,
-	InternalServerError = 500
-}
+import { Token, StatusCode } from '@/types/enums.ts'
 
 let isAlreadyFetchingAccessToken = false
 let subscribers = []
@@ -23,7 +15,9 @@ const axiosIns = axios.create({
 //send token
 axiosIns.interceptors.request.use(
 	config => {
-		const token = getCookie('accessToken')
+		const token = getCookie(Token.AccessToken)
+		//todo: change to user language
+		config.headers['Accept-Language'] = 'ru'
 		if (token && config.headers) {
 			config.headers.Authorization = `Bearer ${token}`
 		}
@@ -38,13 +32,12 @@ axiosIns.interceptors.request.use(
 //404 or 401 pages use this response
 axiosIns.interceptors.response.use(
 	response => response,
-	er => {
-		const { config, response: error } = err
+	err => {
+		const { config, response } = err
 		const originalRequest = config
-
 		if (
-			error &&
-			error.status === StatusCode.Unauthorized &&
+			response &&
+			response.status === StatusCode.Unauthorized &&
 			window.location.pathname !== '/login'
 		) {
 			if (!isAlreadyFetchingAccessToken) {
@@ -53,7 +46,7 @@ axiosIns.interceptors.response.use(
 					isAlreadyFetchingAccessToken = false
 
 					// Update accessToken in localStorage
-					setCookie('refreshToken', res.data.refresh, 7)
+					setCookie(Token.RefreshToken, res.data.refresh, 7)
 
 					onAccessTokenFetched(res.data.access)
 				})
@@ -67,29 +60,29 @@ axiosIns.interceptors.response.use(
 				window.location.pathname = '/login'
 			}
 			const retryOriginalRequest = new Promise(resolve => {
-				addSubscriber(accessToken => {
+				addSubscriber((accessToken: string) => {
 					originalRequest.headers.Authorization = `Bearer ${accessToken}`
 					resolve(axiosIns(originalRequest))
 				})
 			})
 			return retryOriginalRequest
-		} else if (error.status === StatusCode.UnprocessableEntity) {
-			if (error && error.data && error.data.message) {
-				console.log(error.data.message)
+		} else if (response.status === StatusCode.UnprocessableEntity) {
+			if (response && response.data && response.data.message) {
+				console.log(response.data.message)
 			}
-		} else if (error.status === StatusCode.BadRequest) {
-			if (error && error.data && error.data.message) {
-				console.log(error.data.message)
+		} else if (response.status === StatusCode.BadRequest) {
+			if (response && response.data && response.data.message) {
+				console.log(response.data.message)
 			}
-		} else if (error.status === StatusCode.InternalServerError) {
+		} else if (response.status === StatusCode.InternalServerError) {
 		}
-		return Promise.reject(error)
+		return Promise.reject(response)
 	}
 )
 
 function refreshToken() {
 	return axiosIns.post('auth/refresh', {
-		refresh_token: getCookie('refreshToken')
+		refresh_token: getCookie(Token.RefreshToken)
 	})
 }
 

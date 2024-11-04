@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import { OTP } from '@/components/Form'
 import { Icon } from '@/components/Base'
-import { onMounted, ref } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import { useAuthStore } from '@/stores/auth'
+import { maskPhoneNumber } from '@/utils'
 
 const emit = defineEmits<{
 	(e: 'action', action: 'next' | 'back'): void
@@ -11,6 +12,18 @@ const emit = defineEmits<{
 const authStore = useAuthStore()
 
 const secondsLeft = ref(60)
+const isOtpInvalid = computed(() => authStore.otpInfo.otp_invalid)
+
+const disableError = () => (authStore.otpInfo.otp_invalid = false)
+
+function onComplete(code: string) {
+	authStore
+		.confirmOtp({
+			code,
+			otp_guid: authStore.otpInfo.otp_guid
+		})
+		.then(() => emit('action', 'next'))
+}
 
 onMounted(() => {
 	const timer = setInterval(() => {
@@ -32,12 +45,20 @@ onMounted(() => {
 			<h1 class="title">Введите код</h1>
 			<p class="info">
 				Мы отправили код на номер <br />
-				+998 {{ authStore.phoneNumber }}
+				+998 {{ maskPhoneNumber(authStore.phoneNumber) }}
 			</p>
 		</div>
 
-		<div class="codeInputContainer">
-			<OTP :fields="5" />
+		<div
+			class="codeInputContainer"
+			:class="[{ 'animate-shake': isOtpInvalid }]"
+		>
+			<OTP
+				:error="isOtpInvalid"
+				@change="disableError"
+				@complete="onComplete"
+				:fields="5"
+			/>
 		</div>
 		<p v-if="secondsLeft > 0" class="resend">
 			Отправить повторно через 00:{{ secondsLeft }}
@@ -54,7 +75,7 @@ onMounted(() => {
 
 <style scoped lang="postcss">
 .wrapper {
-	@apply flex justify-start flex-col w-full h-screen overflow-hidden pb-10 pt-2.5;
+	@apply flex justify-start flex-col w-full h-screen overflow-hidden pb-10 pt-[16px];
 }
 
 .header {

@@ -3,6 +3,7 @@ import { useRouter } from 'vue-router'
 import { onMounted, ref } from 'vue'
 import { getCookie } from '@/utils/cookie.ts'
 import { SplashScreen } from '@/components'
+import { Token } from '@/types/enums.ts'
 
 const router = useRouter()
 const pin = ref<string | null>(null)
@@ -28,8 +29,8 @@ function redirectToPin() {
 onMounted(() => {
 	if (typeof window !== 'undefined') {
 		pin.value = localStorage.getItem('pinCode')
-		accessToken.value = getCookie('accessToken')
-		refreshToken.value = getCookie('refreshToken')
+		accessToken.value = getCookie(Token.AccessToken)
+		refreshToken.value = getCookie(Token.RefreshToken)
 	}
 
 	if (window.Telegram && window.Telegram.WebApp) {

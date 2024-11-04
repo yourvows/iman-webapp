@@ -1,10 +1,13 @@
 <script setup lang="ts">
 import { onMounted, onUnmounted, ref, watch } from 'vue'
-import { useRouter } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { Icon } from '@/components/Base'
 
 const router = useRouter()
+const route = useRoute()
+
 const pin = ref('')
+const isEnter = ref(false)
 
 const handleNumberClick = (number: string) => {
 	if (pin.value.length < 4) {
@@ -25,7 +28,12 @@ const handleKeyPress = e => {
 }
 
 watch(pin, () => {
-	if (pin.value.length === 4) {
+	if (pin.value.length !== 4) return
+
+	if (isEnter.value) {
+		const code = localStorage.getItem('pinCode')
+		if (pin.value === code) router.push('/home')
+	} else {
 		localStorage.setItem('pinCode', pin.value)
 
 		router.push('/home')
@@ -33,6 +41,10 @@ watch(pin, () => {
 })
 
 onMounted(() => {
+	if (route.path === '/auth/pin') {
+		isEnter.value = true
+	}
+
 	window.addEventListener('keydown', handleKeyPress)
 })
 onUnmounted(() => {
@@ -42,11 +54,13 @@ onUnmounted(() => {
 
 <template>
 	<div class="wrapper container">
-		<h1 class="title">Установите PIN-код</h1>
+		<h1 v-if="!isEnter" class="title">Установите PIN-код</h1>
+		<h1 v-else class="title">Введите пароль PIN-код</h1>
 
-		<p class="subtitle">
+		<p v-if="!isEnter" class="subtitle">
 			Этот PIN-код будет использоваться <br />для входа в приложение
 		</p>
+		<p v-else class="subtitle">Для входа введите придуманный ранее код</p>
 		<div class="pinIndicators">
 			<div
 				v-for="(_, index) in Array(4)"
@@ -82,7 +96,7 @@ onUnmounted(() => {
 }
 
 .subtitle {
-	@apply w-full font-medium text-[14px] leading-[22px] mb-12;
+	@apply w-full font-medium text-neutral text-[14px] leading-[20px] mb-12;
 }
 
 .pinIndicators {

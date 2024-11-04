@@ -6,21 +6,22 @@ import {
 	ISendOtpResponse,
 	IUpdateResponse
 } from '@/types/auth.ts'
+import { Token, AuthTypes, StatusCode } from '@/types/enums.ts'
+import { setCookie } from '@/utils/cookie.ts'
 
 type AuthType = AuthTypes.Phone | AuthTypes.Email
 
 export const useAuthStore = defineStore('auth', {
 	state: () => ({
-		accessToken: localStorage.getItem('accessToken') || '',
-		refreshToken: localStorage.getItem('refreshToken') || '',
-		userData: localStorage.getItem('userData') || '',
+		otpInfo: {
+			otp_guid: '',
+			login_exists: false,
+			otp_invalid: false
+		},
 		phoneNumber: ''
 	}),
 	getters: {},
 	actions: {
-		setPhoneNumber(phoneNumber: string) {
-			this.phoneNumber = phoneNumber
-		},
 		sendOtp(params: {
 			auth_type: AuthType
 			phone_number?: string
@@ -28,14 +29,16 @@ export const useAuthStore = defineStore('auth', {
 		}): Promise<ISendOtpResponse> {
 			return new Promise((resolve, reject) => {
 				http
-					.post('/investor/send-otp', params, {
+					.post<ISendOtpResponse>('/investor/send-otp', params, {
 						headers: {
 							'Otp-Secret':
 								'SU1BTl9JTlZFU1Q6OGRhYTY3ZGMtYjdlZi00NjAwLThmOWMtNzRhODAxZTQ5NDcy'
 						}
 					})
-					.then(res => {
-						resolve(res)
+					.then(({ data }) => {
+						this.otpInfo.otp_guid = data.otp_guid
+						this.otpInfo.login_exists = data.login_exists
+						resolve(data)
 					})
 					.catch(err => reject(err))
 			})
@@ -46,11 +49,18 @@ export const useAuthStore = defineStore('auth', {
 		}): Promise<IConfirmOtpResponse> {
 			return new Promise((resolve, reject) => {
 				http
-					.post('/investor/confirm-otp', params)
-					.then(res => {
-						resolve(res)
+					.post<IConfirmOtpResponse>('/investor/confirm-otp', params)
+					.then(({ data }) => {
+						setCookie(Token.AccessToken, data.access_token, 7)
+						setCookie(Token.RefreshToken, data.refresh_token, 365 * 100)
+						resolve(data)
 					})
-					.catch(err => reject(err))
+					.catch(err => {
+						if (err.status === StatusCode.BadRequest) {
+							this.otpInfo.otp_invalid = true
+						}
+						reject(err)
+					})
 			})
 		},
 		refreshToken(params: {

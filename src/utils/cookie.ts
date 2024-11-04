@@ -1,4 +1,4 @@
-export function setCookie(name: string, value: object, expirationDays: number) {
+export function setCookie(name: string, value: string, expirationDays: number) {
 	const date = new Date()
 
 	const millisecondsInADay = 24 * 60 * 60 * 1000

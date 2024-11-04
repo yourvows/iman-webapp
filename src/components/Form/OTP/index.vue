@@ -148,7 +148,9 @@ const triggerChange = (values = values.value) => {
 	emit('update:modelValue', val)
 	if (val.length >= fields.value) {
 		emit('complete', val)
+		return
 	}
+	emit('change', val)
 }
 initVals()
 watch(
@@ -201,7 +203,13 @@ const pasteDigits = e => {
 			required
 			inputmode="numeric"
 			autocomplete="one-time-code"
-			:class="[inputClass, { 'border-red-500': error }]"
+			:class="[
+				inputClass,
+				{
+					'!border-[#F93C651A]/5 !border !border-solid !bg-[#F93C651A]/10':
+						error
+				}
+			]"
 			pattern="\d*"
 			:autoFocus="autoFocus && index === autoFocusIndex"
 			:data-id="index"
@@ -219,6 +227,6 @@ const pasteDigits = e => {
 
 <style lang="postcss" scoped>
 input {
-	@apply caret-[#3680FF] focus:outline-1 focus:outline-[#3680FF]/50 w-16 h-full text-center font-semibold text-2xl leading-8 rounded-[16px] bg-[#F2F3F5] border-none outline-none;
+	@apply caret-[#3680FF] focus:border focus:border-[#3680FF]/50 w-16 h-full text-center font-semibold text-2xl leading-8 rounded-[16px] bg-[#F2F3F5] border-none outline-none;
 }
 </style>

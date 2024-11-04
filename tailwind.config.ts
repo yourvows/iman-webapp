@@ -4,11 +4,11 @@ export default {
 	theme: {
 		keyframes: {
 			shake: {
-				'0%': { top: '2px', left: '2px' },
-				'25%': { top: '-2px', left: '2px' },
-				'50%': { top: '2px', left: '-2px' },
-				'75%': { top: '-2px', left: '-2px' },
-				'100%': { top: '0', left: '0' }
+				'0%': { transform: 'translateX(4px)' },
+				'25%': { transform: 'translateX(-4px)' },
+				'50%': { transform: 'translateX(4px)' },
+				'75%': { transform: 'translateX(-4px)' },
+				'100%': { transform: 'translateX(0)' }
 			}
 		},
 		animation: {

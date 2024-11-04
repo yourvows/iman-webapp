@@ -29,12 +29,13 @@ function validatePhoneNumber(phoneNumber: string) {
 
 async function sendOtpRequest(number: string) {
 	const formattedNumber = `998${number.replace(/\D/g, '')}`
+
+	await authStore.sendOtp({
+		auth_type: 1,
+		email: '',
+		phone_number: formattedNumber
+	})
 	emit('action', 'next')
-	// authStore.sendOtp({
-	// 	auth_type: 1,
-	// 	email: `random${Math.floor(Math.random() * 10000)}@iman.uz`,
-	// 	phone_number: formattedNumber
-	// })
 }
 </script>
 

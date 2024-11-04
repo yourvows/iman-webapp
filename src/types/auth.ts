@@ -1,6 +1,7 @@
 export interface IConfirmOtpResponse {
-	code: string
-	otp_guid: string
+	access_token: string
+	investor_id: string
+	refresh_token: string
 }
 export interface IRefreshTokenResponse {
 	access_token: string
