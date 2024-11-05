@@ -1,14 +1,16 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { onMounted, ref } from 'vue'
 import { useAuthStore } from '@/stores/auth'
 import { vMaska } from 'maska/vue'
-import { Icon, VButton } from '@/components/Base'
+import { Icon } from '@/components/Base'
+import { useTelegram } from '@/composables/useTelegram.ts'
 
 const emit = defineEmits<{
 	(e: 'action', action: 'next' | 'back'): void
 }>()
 
 const authStore = useAuthStore()
+const { MainButton, BackButton } = useTelegram()
 
 const isValid = ref(true)
 const isKeyboardOpen = ref(false)
@@ -37,6 +39,16 @@ async function sendOtpRequest(number: string) {
 	})
 	emit('action', 'next')
 }
+
+onMounted(() => {
+	if (BackButton.isVisible) {
+		BackButton.hide()
+	}
+	MainButton.text = 'Продолжить'
+	MainButton.color = '#3680FF'
+	MainButton.onClick(nextPage)
+	MainButton.show()
+})
 </script>
 
 <template>
@@ -63,7 +75,6 @@ async function sendOtpRequest(number: string) {
 		<p v-if="!isValid" class="error">Неверный номер телефона</p>
 
 		<div class="bottom">
-			<VButton @click="nextPage">Продолжить</VButton>
 			<p class="text">
 				Нажимая на кнопку Продолжить, <br />
 				вы соглашаетесь с <span class="text-blue">условиями</span> и

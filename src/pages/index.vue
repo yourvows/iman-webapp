@@ -4,8 +4,11 @@ import { onMounted, ref } from 'vue'
 import { getCookie } from '@/utils/cookie.ts'
 import { SplashScreen } from '@/components'
 import { Token } from '@/types/enums.ts'
+import { useTelegram } from '@/composables/useTelegram.ts'
 
 const router = useRouter()
+const { webApp } = useTelegram()
+
 const pin = ref<string | null>(null)
 const accessToken = ref<string | null>(null)
 const refreshToken = ref<string | null>(null)
@@ -33,12 +36,8 @@ onMounted(() => {
 		refreshToken.value = getCookie(Token.RefreshToken)
 	}
 
-	if (window.Telegram && window.Telegram.WebApp) {
-		const webApp = window.Telegram.WebApp
-
-		webApp.expand()
-		webApp.disableClosingConfirmation()
-	}
+	webApp.expand()
+	webApp.disableClosingConfirmation()
 
 	if (pin.value && accessToken && refreshToken) {
 		redirectToPin()

@@ -1,20 +1,23 @@
 <script setup lang="ts">
 import { OTP } from '@/components/Form'
-import { Icon } from '@/components/Base'
 import { computed, onMounted, ref } from 'vue'
 import { useAuthStore } from '@/stores/auth'
 import { maskPhoneNumber } from '@/utils'
+import { useTelegram } from '@/composables/useTelegram.ts'
 
 const emit = defineEmits<{
 	(e: 'action', action: 'next' | 'back'): void
 }>()
 
+const { BackButton, MainButton } = useTelegram()
 const authStore = useAuthStore()
 
 const secondsLeft = ref(60)
 const isOtpInvalid = computed(() => authStore.otpInfo.otp_invalid)
 
 const disableError = () => (authStore.otpInfo.otp_invalid = false)
+
+const goBack = () => emit('action', 'back')
 
 function onComplete(code: string) {
 	authStore
@@ -26,6 +29,12 @@ function onComplete(code: string) {
 }
 
 onMounted(() => {
+	if (MainButton.isVisible) {
+		MainButton.hide()
+	}
+	BackButton.show()
+	BackButton.onClick(goBack)
+
 	const timer = setInterval(() => {
 		if (secondsLeft.value > 0) {
 			secondsLeft.value = secondsLeft.value - 1
@@ -38,9 +47,6 @@ onMounted(() => {
 
 <template>
 	<div class="wrapper container">
-		<button @click="emit('action', 'back')" class="backButton">
-			<Icon icon="arrow-left" size="16px" />
-		</button>
 		<div class="header">
 			<h1 class="title">Введите код</h1>
 			<p class="info">
