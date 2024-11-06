@@ -75,7 +75,7 @@ watch(selectedId, () => {
 						<input type="radio" id="tariff1" name="tariff" />
 						<div class="radioGroup">
 							<div class="tariffItemDesc">
-								<img src="../../../assets/icons/flag-circle.svg" alt="" />
+								<img src="../../../assets/icons/flag-uz.svg" alt="" />
 								Сумовый
 							</div>
 							<div class="tariffItemPercent">~27%</div>

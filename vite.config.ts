@@ -5,6 +5,7 @@ import path from 'path'
 import dotenv from 'dotenv'
 import autoprefixer from 'autoprefixer'
 import tailwind from 'tailwindcss'
+import { fileURLToPath } from 'node:url'
 
 dotenv.config()
 
@@ -27,9 +28,7 @@ export default defineConfig({
 	},
 	resolve: {
 		alias: {
-			'@': path.resolve(__dirname, './src'),
-			'@base': path.resolve(__dirname, './src/components/Base'),
-			'@components': path.resolve(__dirname, './src/components')
+			'@': fileURLToPath(new URL('./src', import.meta.url))
 		}
 	}
 })

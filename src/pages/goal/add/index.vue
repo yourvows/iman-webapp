@@ -55,6 +55,7 @@ watch(
 onMounted(() => {
 	MainButton.show()
 	BackButton.show()
+	BackButton.onClick(() => router.push('/home'))
 	MainButton.onClick(() => router.push('/goal-select-plan'))
 })
 </script>

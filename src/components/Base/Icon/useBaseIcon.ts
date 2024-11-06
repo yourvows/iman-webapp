@@ -1,6 +1,6 @@
 import { computed, defineAsyncComponent } from 'vue'
 
-export default function useBaseIcon(props) {
+export default function useBaseIcon(props: { icon?: string }) {
 	const isSlot = computed(() => typeof props.icon !== 'string')
 
 	const SVGComponent = computed(
