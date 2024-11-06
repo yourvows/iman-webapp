@@ -3,8 +3,9 @@ import { Switch } from '@/components/Form'
 import { onMounted, ref, watch } from 'vue'
 import { useTelegram } from '@/composables/useTelegram.ts'
 import { useRouter } from 'vue-router'
-import FlagUZ from '@/assets/icons/flag-uz.svg'
-import FlagUSA from '@/assets/icons/flag-usa-circle.svg'
+import { Icon } from '@/components/Base'
+import { Drawer, DrawerContent, DrawerTrigger } from '@/components/ui/drawer'
+import { terms, plans } from '@/data/data.ts'
 
 const { MainButton, BackButton } = useTelegram()
 const router = useRouter()
@@ -15,37 +16,6 @@ const income = ref('0')
 const amount = ref(null)
 const term = ref(24)
 const isChecked = ref(false)
-
-const terms = [
-	{
-		id: 12,
-		title: '12 мес',
-		percent: 15
-	},
-	{
-		id: 18,
-		title: '18 мес',
-		percent: 20
-	},
-	{
-		id: 24,
-		title: '24 мес',
-		percent: 27
-	}
-]
-
-const plans = [
-	{
-		icon: FlagUZ,
-		title: 'Сумовый',
-		description: 'Партнерство 99%'
-	},
-	{
-		icon: FlagUSA,
-		title: 'Валютный',
-		description: 'Партнерство 90%'
-	}
-]
 
 const handleTermChange = (id: number, percent: number) => {
 	selectedId.value = id
@@ -94,7 +64,8 @@ onMounted(() => {
 					<input type="radio" :id="`plan-${index + 1}`" name="plan" />
 					<div class="radioGroup">
 						<div class="tariffItemDesc">
-							<img :src="plan.icon" alt="" />
+							<Icon :icon="plan.icon" />
+
 							<div>
 								<h3>{{ plan.title }}</h3>
 								<p>{{ plan.description }}</p>
@@ -142,12 +113,47 @@ onMounted(() => {
 					<div
 						class="flex items-center gap-2 text-neutral text-[13px] font-medium leading-[18px]"
 					>
-						<span class="text-[#3680FF] font-medium text-[32px] leading-[38px]"
-							>~{{ percentage }}%</span
-						>
+						<span class="text-[#3680FF] font-medium text-[32px] leading-[38px]">
+							~{{ percentage }}%
+						</span>
 						за весь срок
 					</div>
-					<i class="icon-info text-[18px] text-neutral/50" />
+					<Drawer>
+						<DrawerTrigger>
+							<i class="icon-info text-[18px] text-neutral/50" />
+						</DrawerTrigger>
+						<DrawerContent>
+							<div class="container">
+								<div class="flex gap-[8px]">
+									<Icon icon="flag-uz" size="32px" />
+									<Icon icon="flag-usa-circle" size="32px" />
+								</div>
+
+								<div class="border-b py-4">
+									<h3 class="font-semibold leading-[21px] mb-2">
+										Чем отличаются тарифы?
+									</h3>
+									<p
+										class="text-[15px] text-neutral font-medium leading-[20px]"
+									>
+										Вы можете открыть вклад в узбекских сумах со ставкой до ~27%
+										в год или в долларах США со ставкой ~13%
+									</p>
+								</div>
+								<div class="py-4">
+									<h3 class="font-semibold leading-[21px] mb-2">
+										Чем отличаются тарифы?
+									</h3>
+									<p
+										class="text-[15px] text-neutral font-medium leading-[20px]"
+									>
+										Вы можете открыть вклад в узбекских сумах со ставкой до ~27%
+										в год или в долларах США со ставкой ~13%
+									</p>
+								</div>
+							</div>
+						</DrawerContent>
+					</Drawer>
 				</div>
 				<div class="flex items-center justify-between">
 					<div
@@ -192,6 +198,7 @@ onMounted(() => {
 				<i class="icon-chevron-right text-neutral/50" />
 			</div>
 		</div>
+
 		<div class="totalText">
 			<span>Открывая вклад, вы соглашаетесь с </span>
 			<span class="condition">условиями</span>
@@ -219,12 +226,6 @@ onMounted(() => {
 	gap: 12px;
 }
 
-.tariffDesc {
-	font-weight: 500;
-	font-size: 15px;
-	line-height: 20px;
-	color: #828da1;
-}
 .card {
 	@apply bg-neutral/[0.06] rounded-2xl p-4;
 }
@@ -295,12 +296,6 @@ onMounted(() => {
 	p {
 		@apply text-neutral text-[12px] leading-[16px];
 	}
-}
-
-.tariffItemPercent {
-	font-weight: 600;
-	font-size: 16px;
-	line-height: 21px;
 }
 
 .totalText {

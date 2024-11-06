@@ -8,8 +8,6 @@
     "baseUrl": ".",
     "paths": {
       "@/*": ["./src/*"],
-      "@components": ["./src/components/index.ts"],
-      "@base": ["./src/components/Base/index.ts"]
     }
   }
 }

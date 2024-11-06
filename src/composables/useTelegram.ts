@@ -12,7 +12,7 @@ export const useTelegram = () => {
 		webApp.themeParams.button_text_color = '#ffffff'
 		webApp.themeParams.secondary_bg_color = '#ffffff'
 		MainButton.text = 'Продолжить'
-		BackButton.onClick(() => router.go(-1))
+		BackButton.onClick(() => router.back())
 	})
 
 	return {
