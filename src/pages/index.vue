@@ -1,13 +1,14 @@
 <script setup lang="ts">
 import { useRouter } from 'vue-router'
 import { onMounted, ref } from 'vue'
-import { getCookie } from '@/utils/cookie.ts'
 import { SplashScreen } from '@/components'
 import { Token } from '@/types/enums.ts'
 import { useTelegram } from '@/composables/useTelegram.ts'
+import { useWebAppCloudStorage } from 'vue-tg'
 
 const router = useRouter()
 const { webApp } = useTelegram()
+const { getStorageItems } = useWebAppCloudStorage()
 
 const pin = ref<string | null>(null)
 const accessToken = ref<string | null>(null)
@@ -29,17 +30,22 @@ function redirectToPin() {
 	return () => clearTimeout(timer)
 }
 
-onMounted(() => {
-	if (typeof window !== 'undefined') {
-		pin.value = localStorage.getItem('pinCode')
-		accessToken.value = getCookie(Token.AccessToken)
-		refreshToken.value = getCookie(Token.RefreshToken)
-	}
+onMounted(async () => {
+	const res = await getStorageItems([
+		Token.AccessToken,
+		Token.RefreshToken,
+		'pinCode'
+	])
+
+	pin.value = res.pinCode
+	accessToken.value = res.accessToken
+	refreshToken.value = res.refreshToken
 
 	webApp.expand()
 	webApp.disableClosingConfirmation()
 
-	if (pin.value && accessToken && refreshToken) {
+	const isLoggedIn = accessToken.value && refreshToken.value && pin.value
+	if (isLoggedIn) {
 		redirectToPin()
 		console.log('Проверка пин-кода успешна')
 	} else {

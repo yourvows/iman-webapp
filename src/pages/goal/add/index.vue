@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { onMounted, ref, watch } from 'vue'
 import { useTelegram } from '@/composables/useTelegram.ts'
-import ModalSelectPlan from '../components/ModalSelectPlan.vue'
+import router from '@/router'
 // import ModalAim from '../components/ModalAim.vue'
 
 const { MainButton, BackButton } = useTelegram()
@@ -45,8 +45,6 @@ const showModalAnswer = () => {
 	modalAnswer.value = true
 }
 
-const openModal = () => (modal.value = true)
-
 watch(
 	() => modal.value,
 	() => {
@@ -57,7 +55,7 @@ watch(
 onMounted(() => {
 	MainButton.show()
 	BackButton.show()
-	MainButton.onClick(openModal)
+	MainButton.onClick(() => router.push('/goal-select-plan'))
 })
 </script>
 
@@ -86,11 +84,11 @@ onMounted(() => {
 				</ul>
 			</div>
 		</div>
-		<ModalSelectPlan
-			@show-modal-aim="showModalAim"
-			:is-open="modal"
-			@close="modal = false"
-		/>
+		<!--		<ModalSelectPlan-->
+		<!--			@show-modal-aim="showModalAim"-->
+		<!--			:is-open="modal"-->
+		<!--			@close="modal = false"-->
+		<!--		/>-->
 		<!--		<ModalAim :is-open="modalAim" @close="modalAim = false" />-->
 	</div>
 </template>

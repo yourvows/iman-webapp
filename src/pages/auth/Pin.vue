@@ -1,10 +1,11 @@
 <script setup lang="ts">
 import { onMounted, onUnmounted, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { Icon } from '@/components/Base'
+import { useWebAppCloudStorage } from 'vue-tg'
 
 const router = useRouter()
 const route = useRoute()
+const { setStorageItem, getStorageItem } = useWebAppCloudStorage()
 
 const pin = ref('')
 const isEnter = ref(false)
@@ -27,14 +28,15 @@ const handleKeyPress = e => {
 	}
 }
 
-watch(pin, () => {
+watch(pin, async () => {
 	if (pin.value.length !== 4) return
 
 	if (isEnter.value) {
-		const code = localStorage.getItem('pinCode')
+		const code = await getStorageItem('pinCode')
+		console.log(code)
 		if (pin.value === code) router.push('/home')
 	} else {
-		localStorage.setItem('pinCode', pin.value)
+		await setStorageItem('pinCode', pin.value)
 
 		router.push('/home')
 	}
@@ -81,7 +83,7 @@ onUnmounted(() => {
 			</button>
 
 			<button class="deleteButton" @click="handleDelete">
-				<Icon icon="remove" />
+				<i class="icon-remove" />
 			</button>
 		</div>
 	</div>
@@ -119,11 +121,14 @@ onUnmounted(() => {
 	@apply w-[288px] flex justify-center items-start flex-wrap gap-[24px] relative;
 
 	.numberButton {
-		@apply font-semibold w-[80px] h-[80px] active:bg-neutral transition-all delay-300 rounded-full text-[28px] leading-[34px] flex items-center justify-center;
+		@apply font-semibold w-[80px] h-[80px] hover:bg-neutral/20 transition-all delay-100 rounded-full text-[28px] leading-[34px] flex items-center justify-center;
 	}
 
 	.deleteButton {
-		@apply font-semibold w-[80px] h-[80px] active:bg-neutral transition-all delay-300 rounded-full text-[28px] leading-[34px] flex items-center justify-center absolute right-0 bottom-0;
+		@apply font-semibold w-[80px] h-[80px] hover:bg-neutral/20 transition-all delay-100 rounded-full text-[28px] leading-[34px] flex items-center justify-center absolute right-0 bottom-0;
+		i {
+			@apply text-[23px];
+		}
 	}
 }
 </style>

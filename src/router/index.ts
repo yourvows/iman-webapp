@@ -26,6 +26,11 @@ const routes = [
 		path: '/goal-add',
 		name: 'Goal',
 		component: () => import('@/pages/goal/add/index.vue')
+	},
+	{
+		path: '/goal-select-plan',
+		name: 'GoalSelectPlan',
+		component: () => import('@/pages/goal/select-plan/index.vue')
 	}
 ]
 

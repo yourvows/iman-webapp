@@ -1,11 +1,12 @@
 // import { logout } from '@/auth/jwtService'
 import axios from 'axios'
-
-import { getCookie, setCookie } from '@/utils/cookie.ts'
+import { useWebAppCloudStorage } from 'vue-tg'
 import { Token, StatusCode } from '@/types/enums.ts'
 
 let isAlreadyFetchingAccessToken = false
 let subscribers = []
+
+const { setStorageItem, getStorageItem } = useWebAppCloudStorage()
 
 const axiosIns = axios.create({
 	baseURL: '/api',
@@ -14,8 +15,8 @@ const axiosIns = axios.create({
 
 //send token
 axiosIns.interceptors.request.use(
-	config => {
-		const token = getCookie(Token.AccessToken)
+	async config => {
+		const token = await getStorageItem(Token.AccessToken)
 		//todo: change to user language
 		config.headers['Accept-Language'] = 'ru'
 		if (token && config.headers) {
@@ -42,11 +43,11 @@ axiosIns.interceptors.response.use(
 		) {
 			if (!isAlreadyFetchingAccessToken) {
 				isAlreadyFetchingAccessToken = true
-				refreshToken().then(res => {
+				refreshToken().then(async res => {
 					isAlreadyFetchingAccessToken = false
 
 					// Update accessToken in localStorage
-					setCookie(Token.RefreshToken, res.data.refresh, 7)
+					await setStorageItem(Token.AccessToken, res.data.access)
 
 					onAccessTokenFetched(res.data.access)
 				})
@@ -82,7 +83,7 @@ axiosIns.interceptors.response.use(
 
 function refreshToken() {
 	return axiosIns.post('auth/refresh', {
-		refresh_token: getCookie(Token.RefreshToken)
+		refresh_token: getStorageItem(Token.RefreshToken)
 	})
 }
 

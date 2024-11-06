@@ -7,9 +7,10 @@ import {
 	IUpdateResponse
 } from '@/types/auth.ts'
 import { Token, AuthTypes, StatusCode } from '@/types/enums.ts'
-import { setCookie } from '@/utils/cookie.ts'
+import { useWebAppCloudStorage } from 'vue-tg'
 
 type AuthType = AuthTypes.Phone | AuthTypes.Email
+const { setStorageItem } = useWebAppCloudStorage()
 
 export const useAuthStore = defineStore('auth', {
 	state: () => ({
@@ -51,8 +52,8 @@ export const useAuthStore = defineStore('auth', {
 				http
 					.post<IConfirmOtpResponse>('/investor/confirm-otp', params)
 					.then(({ data }) => {
-						setCookie(Token.AccessToken, data.access_token, 7)
-						setCookie(Token.RefreshToken, data.refresh_token, 365 * 100)
+						setStorageItem(Token.AccessToken, data.access_token)
+						setStorageItem(Token.RefreshToken, data.refresh_token)
 						resolve(data)
 					})
 					.catch(err => {

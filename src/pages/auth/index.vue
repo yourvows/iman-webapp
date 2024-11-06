@@ -2,7 +2,6 @@
 import Pin from './Pin.vue'
 import PhoneNumber from './PhoneNumber.vue'
 import Confirm from './Confirm.vue'
-import { useAuthStore } from '@/stores/auth'
 import { markRaw, ref } from 'vue'
 
 const components = ref([markRaw(PhoneNumber), markRaw(Confirm), markRaw(Pin)])
