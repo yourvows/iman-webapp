@@ -1,7 +1,6 @@
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
 import svgLoader from 'vite-svg-loader'
-import path from 'path'
 import dotenv from 'dotenv'
 import autoprefixer from 'autoprefixer'
 import tailwind from 'tailwindcss'

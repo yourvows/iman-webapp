@@ -41,8 +41,8 @@ onMounted(async () => {
 	accessToken.value = res.accessToken
 	refreshToken.value = res.refreshToken
 
-	webApp.expand()
-	webApp.disableClosingConfirmation()
+	webApp.enableVerticalSwipes()
+	webApp.enableClosingConfirmation()
 
 	const isLoggedIn = accessToken.value && refreshToken.value && pin.value
 	if (isLoggedIn) {

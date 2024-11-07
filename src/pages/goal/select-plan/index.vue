@@ -3,9 +3,9 @@ import { Switch } from '@/components/Form'
 import { onMounted, ref, watch } from 'vue'
 import { useTelegram } from '@/composables/useTelegram.ts'
 import { useRouter } from 'vue-router'
-import { Icon } from '@/components/Base'
-import { Drawer, DrawerContent, DrawerTrigger } from '@/components/ui/drawer'
+import { Icon, Card } from '@/components/Base'
 import { terms, plans } from '@/data/data.ts'
+import { AboutPlans, IncomeCalc } from '@/pages/goal/select-plan/components'
 
 const { MainButton, BackButton } = useTelegram()
 const router = useRouter()
@@ -72,7 +72,7 @@ onMounted(() => {
 							</div>
 						</div>
 					</div>
-					<span class="radioIcon"></span>
+					<span class="radioIcon" />
 				</label>
 			</div>
 		</div>
@@ -108,7 +108,7 @@ onMounted(() => {
 			</div>
 		</div>
 		<div class="py-4 flex flex-col gap-2">
-			<div class="card flex gap-6 flex-col">
+			<Card class="flex gap-6 flex-col">
 				<div class="flex items-center justify-between">
 					<div
 						class="flex items-center gap-2 text-neutral text-[13px] font-medium leading-[18px]"
@@ -118,42 +118,7 @@ onMounted(() => {
 						</span>
 						за весь срок
 					</div>
-					<Drawer>
-						<DrawerTrigger>
-							<i class="icon-info text-[18px] text-neutral/50" />
-						</DrawerTrigger>
-						<DrawerContent>
-							<div class="container">
-								<div class="flex gap-[8px]">
-									<Icon icon="flag-uz" size="32px" />
-									<Icon icon="flag-usa-circle" size="32px" />
-								</div>
-
-								<div class="border-b py-4">
-									<h3 class="font-semibold leading-[21px] mb-2">
-										Чем отличаются тарифы?
-									</h3>
-									<p
-										class="text-[15px] text-neutral font-medium leading-[20px]"
-									>
-										Вы можете открыть вклад в узбекских сумах со ставкой до ~27%
-										в год или в долларах США со ставкой ~13%
-									</p>
-								</div>
-								<div class="py-4">
-									<h3 class="font-semibold leading-[21px] mb-2">
-										Чем отличаются тарифы?
-									</h3>
-									<p
-										class="text-[15px] text-neutral font-medium leading-[20px]"
-									>
-										Вы можете открыть вклад в узбекских сумах со ставкой до ~27%
-										в год или в долларах США со ставкой ~13%
-									</p>
-								</div>
-							</div>
-						</DrawerContent>
-					</Drawer>
+					<AboutPlans />
 				</div>
 				<div class="flex items-center justify-between">
 					<div
@@ -179,8 +144,8 @@ onMounted(() => {
 						>
 					</div>
 				</div>
-			</div>
-			<div class="card flex justify-between items-center gap-3">
+			</Card>
+			<Card class="card flex justify-between items-center gap-3">
 				<div
 					class="flex w-[90%] items-center gap-[18px] font-medium text-[15px] leading-[20px]"
 				>
@@ -188,15 +153,8 @@ onMounted(() => {
 					вашими деньгами?
 				</div>
 				<i class="icon-chevron-right text-neutral/50" />
-			</div>
-			<div class="card flex justify-between items-center gap-3">
-				<div
-					class="flex w-[90%] items-center gap-[18px] font-medium text-[15px] leading-[20px]"
-				>
-					<i class="icon-calculator text-blue text-[18px]" />Калькулятор прибыли
-				</div>
-				<i class="icon-chevron-right text-neutral/50" />
-			</div>
+			</Card>
+			<IncomeCalc />
 		</div>
 
 		<div class="totalText">

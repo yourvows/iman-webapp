@@ -36,8 +36,8 @@ onMounted(() => {
 					<h3>Поставьте цель и получайте до 27% прибыли</h3>
 					<p>Поставьте цель и зарабатывайте, получайте до 27% прибыли</p>
 				</div>
-				<div class="buttonClose">
-					<Icon icon="x" />
+				<div>
+					<i class="icon-x text-[7px] text-center text-neutral" />
 				</div>
 			</div>
 		</div>
@@ -124,14 +124,6 @@ onMounted(() => {
 	}
 	& > p {
 		@apply leading-[16px] text-[14px] text-left text-[#040415]/50;
-	}
-}
-
-.buttonClose {
-	@apply size-[12px];
-
-	img {
-		@apply w-full h-full object-contain;
 	}
 }
 

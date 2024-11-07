@@ -1,57 +1,12 @@
 <script setup lang="ts">
-import { onMounted, ref, watch } from 'vue'
+import { onMounted } from 'vue'
 import { useTelegram } from '@/composables/useTelegram.ts'
-import router from '@/router'
-// import ModalAim from '../components/ModalAim.vue'
+import { goalAbout } from '@/data/data.ts'
+import { useRouter } from 'vue-router'
 
 const { MainButton, BackButton } = useTelegram()
+const router = useRouter()
 
-const modal = ref(false)
-const modalAim = ref(false)
-const modalAnswer = ref(false)
-
-const goalAbout = [
-	{
-		icon: 'calendar',
-		title: '27% годовых',
-		description: 'Ставка без дополнительных условий, трат и скрытых условий'
-	},
-	{
-		icon: 'money',
-		title: 'Выплачиваем каждый месяц',
-		description: 'Получайте прибыль каждый месяц первого числа'
-	},
-	{
-		icon: 'deal',
-		title: 'Помогаете людям',
-		description:
-			'Средства идут на помощь людям получать товары и услуги без нагрузок на финансовое состояние (Риба)'
-	},
-	{
-		icon: 'secure',
-		title: 'Пополняйте когда угодно',
-		description:
-			'Вы можете пополнять вклад в любой момент, увеличивая вашу прибыль'
-	}
-]
-
-const showModalAim = () => {
-	modal.value = false
-	modalAim.value = true
-}
-
-const showModalAnswer = () => {
-	modalAim.value = false
-	modalAnswer.value = true
-}
-
-watch(
-	() => modal.value,
-	() => {
-		if (modal.value) MainButton.hide()
-		else MainButton.show()
-	}
-)
 onMounted(() => {
 	MainButton.show()
 	BackButton.show()
@@ -63,7 +18,7 @@ onMounted(() => {
 <template>
 	<div class="wrapper">
 		<div class="top">
-			<img src="@/assets/images/coins.png" alt="coins" />
+			<img src="@/assets/images/coins.webp" alt="coins" />
 		</div>
 		<div class="body container">
 			<div class="title">О вкладе</div>
@@ -85,12 +40,6 @@ onMounted(() => {
 				</ul>
 			</div>
 		</div>
-		<!--		<ModalSelectPlan-->
-		<!--			@show-modal-aim="showModalAim"-->
-		<!--			:is-open="modal"-->
-		<!--			@close="modal = false"-->
-		<!--		/>-->
-		<!--		<ModalAim :is-open="modalAim" @close="modalAim = false" />-->
 	</div>
 </template>
 
