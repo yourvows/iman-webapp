@@ -1,3 +1,1 @@
-import SplashScreen from './SplashScreen/index.vue'
-
-export { SplashScreen }
+export { default as SplashScreen } from './SplashScreen/index.vue'

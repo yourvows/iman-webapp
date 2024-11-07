@@ -1,4 +1,2 @@
-import OTP from './OTP/index.vue'
-import Switch from './Switch/index.vue'
-
-export { OTP, Switch }
+export { default as OTP } from './OTP/index.vue'
+export { default as Switch } from './Switch/index.vue'
