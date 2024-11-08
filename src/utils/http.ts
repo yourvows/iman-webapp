@@ -4,7 +4,8 @@ import { useWebAppCloudStorage } from 'vue-tg'
 import { Token, StatusCode } from '@/types/enums.ts'
 
 let isAlreadyFetchingAccessToken = false
-let subscribers = []
+
+let subscribers: ((accessToken: string) => void)[] = []
 
 const { setStorageItem, getStorageItem } = useWebAppCloudStorage()
 
@@ -90,7 +91,7 @@ async function refreshToken() {
 function onAccessTokenFetched(accessToken: string) {
 	subscribers = subscribers.filter(callback => callback(accessToken))
 }
-function addSubscriber(callback) {
+function addSubscriber(callback: (accessToken: string) => void) {
 	subscribers.push(callback)
 }
 
