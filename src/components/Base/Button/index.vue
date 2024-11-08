@@ -2,7 +2,7 @@
 import { computed } from 'vue'
 
 const props = defineProps<{
-	variant?: 'primary' | 'secondary' | 'transparent'
+	variant: 'primary' | 'secondary' | 'transparent'
 }>()
 
 const buttonClass = computed(() => {
