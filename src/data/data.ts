@@ -1,18 +1,43 @@
 export const terms = [
 	{
-		id: 12,
+		periodInMonth: 12,
 		title: '12 мес',
-		percent: 15
+		percent: 0.22
 	},
 	{
-		id: 18,
+		periodInMonth: 18,
 		title: '18 мес',
-		percent: 20
+		percent: 0.24
 	},
 	{
-		id: 24,
+		periodInMonth: 24,
 		title: '24 мес',
-		percent: 27
+		percent: 0.27
+	},
+	{
+		periodInMonth: 24,
+		title: '24 мес',
+		percent: 0.27
+	},
+	{
+		periodInMonth: 24,
+		title: '24 мес',
+		percent: 0.27
+	},
+	{
+		periodInMonth: 24,
+		title: '24 мес',
+		percent: 0.27
+	},
+	{
+		periodInMonth: 24,
+		title: '24 мес',
+		percent: 0.27
+	},
+	{
+		periodInMonth: 24,
+		title: '24 мес',
+		percent: 0.27
 	}
 ]
 
@@ -20,12 +45,14 @@ export const plans = [
 	{
 		icon: 'flag-uz',
 		title: 'Сумовый',
-		description: 'Партнерство 99%'
+		description: 'Партнерство 99%',
+		value: 'UZS'
 	},
 	{
 		icon: 'flag-usa-circle',
 		title: 'Валютный',
-		description: 'Партнерство 90%'
+		description: 'Партнерство 90%',
+		value: 'USD'
 	}
 ]
 

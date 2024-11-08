@@ -3,11 +3,10 @@ import { useRouter } from 'vue-router'
 import { onMounted, ref } from 'vue'
 import { SplashScreen } from '@/components'
 import { Token } from '@/types/enums.ts'
-import { useTelegram } from '@/composables/useTelegram.ts'
 import { useWebAppCloudStorage } from 'vue-tg'
 
 const router = useRouter()
-const { webApp } = useTelegram()
+
 const { getStorageItems } = useWebAppCloudStorage()
 
 const pin = ref<string | null>(null)
@@ -40,9 +39,6 @@ onMounted(async () => {
 	pin.value = res.pinCode
 	accessToken.value = res.accessToken
 	refreshToken.value = res.refreshToken
-
-	webApp.enableVerticalSwipes()
-	webApp.enableClosingConfirmation()
 
 	const isLoggedIn = accessToken.value && refreshToken.value && pin.value
 	if (isLoggedIn) {

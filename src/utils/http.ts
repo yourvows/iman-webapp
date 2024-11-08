@@ -39,26 +39,26 @@ axiosIns.interceptors.response.use(
 		if (
 			response &&
 			response.status === StatusCode.Unauthorized &&
-			window.location.pathname !== '/login'
+			window.location.pathname !== '/auth/login'
 		) {
 			if (!isAlreadyFetchingAccessToken) {
 				isAlreadyFetchingAccessToken = true
 				refreshToken().then(async res => {
+					console.log(res)
 					isAlreadyFetchingAccessToken = false
 
 					// Update accessToken in localStorage
-					await setStorageItem(Token.AccessToken, res.data.access)
+					await setStorageItem(Token.AccessToken, res.data.access_token)
+					await setStorageItem(Token.RefreshToken, res.data.refresh_token)
 
 					onAccessTokenFetched(res.data.access)
 				})
 			} else if (
 				isAlreadyFetchingAccessToken &&
-				config.url === '/auth/refresh'
+				config.url === 'investor/refresh-token'
 			) {
 				// logout()
 				console.log('logout')
-			} else if (!JSON.parse(localStorage.getItem('userData') || '{}')) {
-				window.location.pathname = '/login'
 			}
 			const retryOriginalRequest = new Promise(resolve => {
 				addSubscriber((accessToken: string) => {
@@ -81,9 +81,9 @@ axiosIns.interceptors.response.use(
 	}
 )
 
-function refreshToken() {
-	return axiosIns.post('auth/refresh', {
-		refresh_token: getStorageItem(Token.RefreshToken)
+async function refreshToken() {
+	return axiosIns.post('investor/refresh-token', {
+		refresh_token: await getStorageItem(Token.RefreshToken)
 	})
 }
 

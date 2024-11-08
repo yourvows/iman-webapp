@@ -1,51 +1,90 @@
 <script setup lang="ts">
-import { Switch } from '@/components/Form'
-import { onMounted, ref, watch } from 'vue'
+import { Switch } from '@/components/ui/switch'
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
+import { computed, onMounted, ref, watch } from 'vue'
 import { useTelegram } from '@/composables/useTelegram.ts'
 import { useRouter } from 'vue-router'
 import { Icon, Card } from '@/components/Base'
-import { terms, plans } from '@/data/data.ts'
 import { AboutPlans, IncomeCalc } from '@/pages/goal/select-plan/components'
+import { calculateProfitability, formatMoney } from '@/utils'
+import { useStrategiesStore } from '@/stores/strategies.ts'
+import { Currency, ITariff } from '@/types/strategies.ts'
 
 const { MainButton, BackButton } = useTelegram()
 const router = useRouter()
+const strategiesStore = useStrategiesStore()
 
-const percentage = ref(27)
-const selectedId = ref(3)
-const income = ref('0')
-const amount = ref(null)
-const term = ref(24)
-const isChecked = ref(false)
+const selectedPlan = ref(Currency.UZS)
+const isCapitalized = ref(true)
 
-const handleTermChange = (id: number, percent: number) => {
-	selectedId.value = id
-	percentage.value = percent
-	calculateIncome(amount.value, percentage.value)
-}
-
-const calculateIncome = (amount: number, percentage: number) => {
-	const calculatedIncome = (amount * percentage) / 100
-	income.value = calculatedIncome.toString()
-}
-
-const showModalAim = () => {
-	// emit('show-modal-aim')
-}
-
-watch(selectedId, () => {
-	if (selectedId.value === 1) {
-		term.value = 12
-	} else if (selectedId.value === 2) {
-		term.value = 18
-	} else if (selectedId.value === 3) {
-		term.value = 24
+const terms = computed(() => {
+	return {
+		[Currency.UZS]: strategiesStore.GET_ACTIVE_UZS_TARIFFS,
+		[Currency.USD]: strategiesStore.GET_ACTIVE_USD_TARIFFS
 	}
 })
 
-onMounted(() => {
+const selectedTerm = ref<{ [key in Currency]: ITariff | null }>({
+	[Currency.UZS]: null,
+	[Currency.USD]: null
+})
+
+const tariffTitle = (currency: string) => {
+	if (currency === Currency.UZS) return 'Сумовый'
+	else return 'Валютный'
+}
+
+const planValues = computed(() => {
+	return {
+		[Currency.UZS]: isCapitalized.value
+			? terms.value[Currency.UZS].find(
+					term =>
+						term.currency === Currency.UZS &&
+						selectedTerm.value[Currency.UZS]?.guid === term.guid
+				)?.max_value
+			: terms.value[Currency.UZS].find(
+					term =>
+						term.currency === Currency.UZS &&
+						selectedTerm.value[Currency.UZS]?.guid === term.guid
+				)?.start_value,
+		[Currency.USD]: isCapitalized.value
+			? terms.value[Currency.USD].find(
+					term =>
+						term.currency === Currency.USD &&
+						selectedTerm.value[Currency.USD]?.guid === term.guid
+				)?.max_value
+			: terms.value[Currency.USD].find(term => term.currency === Currency.USD)
+					?.start_value
+	}
+})
+
+const plans = computed(() =>
+	Object.keys(strategiesStore.GET_ACTIVE_TARIFFS_BY_CURRENCY)
+)
+
+const investAmount = computed(() => {
+	return selectedPlan.value === Currency.UZS ? 1e6 : 1e3
+})
+
+const handleTermChange = (term: ITariff) => {
+	if (term.currency === Currency.UZS) selectedTerm.value[Currency.UZS] = term
+	else selectedTerm.value[Currency.USD] = term
+}
+
+watch(
+	selectedPlan,
+	() => {
+		selectedTerm.value[selectedPlan.value] = terms.value[selectedPlan.value][0]
+	},
+	{ immediate: true }
+)
+
+onMounted(async () => {
+	await strategiesStore.getTariffs({ limit: 100 })
+	selectedTerm.value[selectedPlan.value] = terms.value[selectedPlan.value][0]
+	selectedTerm.value[Currency.USD] = terms.value[Currency.USD][0]
 	MainButton.text = 'Открыть вклад'
 	MainButton.show()
-	MainButton.onClick(showModalAim)
 	BackButton.onClick(() => router.push('/goal-add'))
 })
 </script>
@@ -55,40 +94,51 @@ onMounted(() => {
 		<div class="tariffCheckBlock">
 			<h3 class="contentTitle">Выбор тарифа</h3>
 			<div class="tariffList">
-				<label
-					v-for="(plan, index) in plans"
-					:key="index"
-					:for="`plan-${index + 1}`"
-					class="tariffItem card"
-				>
-					<input type="radio" :id="`plan-${index + 1}`" name="plan" />
-					<div class="radioGroup">
-						<div class="tariffItemDesc">
-							<Icon :icon="plan.icon" />
+				<RadioGroup v-model="selectedPlan" :default-value="Currency.UZS">
+					<Card v-for="(plan, index) in plans" :key="index" class="space-x-2">
+						<label class="flex items-center" :for="`r-${index + 1}`">
+							<div class="radioGroup">
+								<div class="tariffItemDesc">
+									<Icon :icon="plan" />
 
-							<div>
-								<h3>{{ plan.title }}</h3>
-								<p>{{ plan.description }}</p>
+									<div>
+										<h3>{{ tariffTitle(plan) }}</h3>
+										<p>
+											Партнерство
+											{{
+												plan === Currency.UZS
+													? planValues[Currency.UZS]
+													: planValues[Currency.USD]
+											}}%
+										</p>
+									</div>
+								</div>
 							</div>
-						</div>
-					</div>
-					<span class="radioIcon" />
-				</label>
+							<RadioGroupItem :id="`r-${index + 1}`" :value="plan" />
+						</label>
+					</Card>
+				</RadioGroup>
 			</div>
 		</div>
 		<label for="time">
 			<div class="contentFormBlock">
-				<div class="contentFormList">
-					<div
-						v-for="(term, index) in terms"
-						:key="term.id"
-						:id="`term-${index + 1}`"
-						class="contentFormListItem"
-						:class="{ active: selectedId === index + 1 }"
-						@click="handleTermChange(index + 1, term.percent)"
+				<div class="contentFormList overflow-x-auto no-scrollbar">
+					<template
+						v-for="(term, index) in terms[selectedPlan]"
+						:key="term.guid"
 					>
-						{{ term.title }}
-					</div>
+						<div
+							v-if="selectedPlan === Currency.UZS || index === 0"
+							:id="`term-${index + 1}`"
+							class="contentFormListItem"
+							:class="{
+								active: selectedTerm[selectedPlan]?.guid === term.guid
+							}"
+							@click="handleTermChange(term)"
+						>
+							{{ term.terms }} мес
+						</div>
+					</template>
 				</div>
 			</div>
 		</label>
@@ -103,7 +153,10 @@ onMounted(() => {
 					</p>
 				</div>
 				<div>
-					<Switch v-model="isChecked" />
+					<Switch
+						:checked="isCapitalized"
+						@update:checked="isCapitalized = !isCapitalized"
+					/>
 				</div>
 			</div>
 		</div>
@@ -114,7 +167,14 @@ onMounted(() => {
 						class="flex items-center gap-2 text-neutral text-[13px] font-medium leading-[18px]"
 					>
 						<span class="text-[#3680FF] font-medium text-[32px] leading-[38px]">
-							~{{ percentage }}%
+							~{{
+								calculateProfitability({
+									isCapitalized,
+									isDollar: selectedPlan === Currency.USD,
+									tariff: selectedTerm[selectedPlan],
+									initialAmount: investAmount
+								}).forecast
+							}}%
 						</span>
 						за весь срок
 					</div>
@@ -125,9 +185,9 @@ onMounted(() => {
 						class="flex flex-col text-[13px] font-medium leading-[18px] text-neutral"
 					>
 						Если вложить
-						<span class="text-black text-[16px] leading-[21px]"
-							>1 000 000 сум</span
-						>
+						<span class="text-black text-[16px] leading-[21px]">{{
+							formatMoney(investAmount, 'ru-RU', selectedPlan)
+						}}</span>
 					</div>
 					<div
 						class="flex border justify-center items-center size-6 rounded-full bg-white"
@@ -139,9 +199,21 @@ onMounted(() => {
 						class="flex flex-col text-[13px] font-medium leading-[18px] text-neutral"
 					>
 						Ваша прибыль
-						<span class="text-[#10C44C] text-right text-[16px] leading-[21px]"
-							>+540 000</span
-						>
+						<span class="text-[#10C44C] text-right text-[16px] leading-[21px]">
+							+
+							{{
+								formatMoney(
+									calculateProfitability({
+										isCapitalized,
+										isDollar: selectedPlan === Currency.USD,
+										tariff: selectedTerm[selectedPlan],
+										initialAmount: investAmount
+									}).result,
+									'ru-RR',
+									selectedPlan
+								)
+							}}
+						</span>
 					</div>
 				</div>
 			</Card>
@@ -306,18 +378,15 @@ onMounted(() => {
 }
 
 .contentFormBlock {
-	@apply py-4;
 	border-bottom: 1px solid #0404150d;
 }
 
 .contentFormListItem {
-	cursor: pointer;
 	font-weight: 500;
 	letter-spacing: -0.01em;
 	line-height: 21px;
-	text-align: left;
-	@apply px-[14px] py-[12px] rounded-[12px] text-neutral/60;
-	width: 79px;
+	@apply rounded-[12px] flex items-center justify-center text-neutral/60 cursor-pointer;
+	min-width: 79px;
 	height: 45px;
 
 	background-color: #f4f4f5;
@@ -331,6 +400,11 @@ onMounted(() => {
 .contentFormList {
 	display: flex;
 	gap: 10px;
+	padding: 16px 0;
+
+	&:first-child {
+		@apply pl-3;
+	}
 }
 .totalOther {
 	display: flex;
