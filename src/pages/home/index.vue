@@ -1,14 +1,5 @@
 <script setup lang="ts">
 import { Icon, VButton } from '@/components/Base'
-import { onMounted } from 'vue'
-import { useTelegram } from '@/composables/useTelegram.ts'
-
-const { MainButton, BackButton } = useTelegram()
-
-onMounted(async () => {
-	MainButton.hide()
-	BackButton.hide()
-})
 </script>
 
 <template>

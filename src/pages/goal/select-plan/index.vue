@@ -2,15 +2,14 @@
 import { Switch } from '@/components/ui/switch'
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 import { computed, onMounted, ref, watch } from 'vue'
-import { useTelegram } from '@/composables/useTelegram.ts'
 import { useRouter } from 'vue-router'
 import { Icon, Card } from '@/components/Base'
 import { AboutPlans, IncomeCalc } from '@/pages/goal/select-plan/components'
 import { calculateProfitability, formatMoney } from '@/utils'
 import { useStrategiesStore } from '@/stores/strategies.ts'
+import { BackButton, MainButton } from 'vue-tg'
 import { Currency, ITariff } from '@/types/strategies.ts'
 
-const { MainButton, BackButton } = useTelegram()
 const router = useRouter()
 const strategiesStore = useStrategiesStore()
 
@@ -83,9 +82,6 @@ onMounted(async () => {
 	await strategiesStore.getTariffs({ limit: 100 })
 	selectedTerm.value[selectedPlan.value] = terms.value[selectedPlan.value][0]
 	selectedTerm.value[Currency.USD] = terms.value[Currency.USD][0]
-	MainButton.text = 'Открыть вклад'
-	MainButton.show()
-	BackButton.onClick(() => router.push('/goal-add'))
 })
 </script>
 
@@ -234,6 +230,8 @@ onMounted(async () => {
 			<span class="condition">условиями</span>
 		</div>
 	</div>
+	<BackButton @click="() => router.push('/goal-add')" />
+	<MainButton text="Открыть вклад" />
 </template>
 
 <style scoped lang="postcss">
