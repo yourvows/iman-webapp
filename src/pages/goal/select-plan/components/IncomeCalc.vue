@@ -12,7 +12,7 @@ import { terms } from '@/data/data.ts'
 import { ref } from 'vue'
 
 const income = ref('0')
-const amount = ref<null | number>(null)
+const amount = ref(1000)
 const percentage = ref(27)
 const selectedId = ref(3)
 
@@ -52,7 +52,7 @@ const calculateIncome = (amount: number, percentage: number) => {
 				<div class="flex gap-[12px] py-[24px]">
 					<div
 						v-for="(term, index) in terms"
-						:key="term.id"
+						:key="term.periodInMonth"
 						:id="`term-${index + 1}`"
 						class="contentFormListItem"
 						:class="{ active: selectedId === index + 1 }"

@@ -148,8 +148,8 @@ const onKeyDown = (e: KeyboardEvent) => {
 			break
 	}
 }
-const triggerChange = (values = values.value) => {
-	const val = values.join('')
+const triggerChange = (vals = values.value) => {
+	const val = vals.join('')
 	emit('update:modelValue', val)
 	if (val.length >= fields.value) {
 		emit('complete', val)
@@ -165,7 +165,7 @@ watch(
 			`verification-input-${randomNumber}`
 		)
 		if (newValue === 2) {
-			inputElement.autofocus
+			inputElement.autofocus = true
 		}
 	},
 	{ immediate: true }
@@ -205,7 +205,7 @@ const pasteDigits = (e: ClipboardEvent) => {
 			:id="`verification-input-${randomNumber + index}`"
 			:ref="
 				el => {
-					if (el) inputs[index + 1] = el
+					if (el) inputs[index + 1] = el as HTMLInputElement
 				}
 			"
 			required

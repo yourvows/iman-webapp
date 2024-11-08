@@ -70,9 +70,7 @@ export const useAuthStore = defineStore('auth', {
 			return new Promise((resolve, reject) => {
 				http
 					.post('/investor/refresh-token', params)
-					.then(res => {
-						resolve(res)
-					})
+					.then(({ data }) => resolve(data))
 					.catch(err => reject(err))
 			})
 		},
@@ -83,9 +81,7 @@ export const useAuthStore = defineStore('auth', {
 			return new Promise((resolve, reject) => {
 				http
 					.put('/investor/update/email', params)
-					.then(res => {
-						resolve(res)
-					})
+					.then(({ data }) => resolve(data))
 					.catch(err => reject(err))
 			})
 		},
@@ -96,9 +92,7 @@ export const useAuthStore = defineStore('auth', {
 			return new Promise((resolve, reject) => {
 				http
 					.put('/investor/update/phone-number', params)
-					.then(res => {
-						resolve(res)
-					})
+					.then(({ data }) => resolve(data))
 					.catch(err => reject(err))
 			})
 		}
