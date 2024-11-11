@@ -1,5 +1,17 @@
 <script setup lang="ts">
-import { Icon, VButton } from '@/components/Base'
+import { Icon, VButton, Card } from '@/components/Base'
+import { computed, onMounted } from 'vue'
+import { useInvestmentsStore } from '@/stores/investments.ts'
+import { useRouter } from 'vue-router'
+
+const investmentsStore = useInvestmentsStore()
+
+const investments = computed(() => investmentsStore.investments)
+const router = useRouter()
+
+onMounted(() => {
+	investmentsStore.getInvestments()
+})
 </script>
 
 <template>
@@ -15,7 +27,7 @@ import { Icon, VButton } from '@/components/Base'
 			</div>
 			<div class="content">
 				<h3 class="contentBalance">0 <span>сум</span></h3>
-				<div class="contentProfit">
+				<div class="contentProfit mb-6">
 					<h3 class="contentProfitTitle">
 						Нет вложений, чтобы начислять прибыль
 					</h3>
@@ -33,8 +45,37 @@ import { Icon, VButton } from '@/components/Base'
 			<!--			</div>-->
 		</div>
 
-		<div class="body">
-			<div class="goalEmpty">
+		<div class="body mt-4 container">
+			<div
+				class="flex flex-col space-y-3 items-start w-full"
+				v-if="investments.length"
+			>
+				<div class="flex w-full items-center font-semibold justify-between">
+					<h1 class="text-[#040415] text-xl leading-[25px]">Ваши вклады</h1>
+					<button
+						@click="router.push('/goal-select-plan')"
+						class="text-[#3680ff] text-[15px] leading-tight"
+					>
+						+ Добавить
+					</button>
+				</div>
+
+				<Card
+					class="w-full flex justify-between items-center gap-3"
+					v-for="investment in investments"
+					:key="investment.guid"
+				>
+					<div
+						class="flex w-[90%] items-center gap-[18px] font-medium text-[15px] leading-[20px]"
+					>
+						<i class="icon-suitcase text-blue text-[18px]" />Как мы управляем
+						вашими деньгами?
+					</div>
+					<i class="icon-chevron-right text-neutral/50" />
+					{{ investment.investment_status }}
+				</Card>
+			</div>
+			<div v-else class="goalEmpty">
 				<div class="goalEmptyIcon">
 					<Icon icon="no-purpose" />
 				</div>

@@ -4,13 +4,15 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 import { computed, onMounted, ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { Icon, Card } from '@/components/Base'
-import { AboutPlans, IncomeCalc } from '@/pages/goal/select-plan/components'
+import { AboutPlans } from '@/pages/goal/select-plan/components'
 import { calculateProfitability, formatMoney } from '@/utils'
 import { useStrategiesStore } from '@/stores/strategies.ts'
+import { Currency, ITariff } from '@/types/strategies.type.ts'
+import { useInvestmentsStore } from '@/stores/investments.ts'
 import { BackButton, MainButton } from 'vue-tg'
-import { Currency, ITariff } from '@/types/strategies.ts'
 
 const router = useRouter()
+const investmentsStore = useInvestmentsStore()
 const strategiesStore = useStrategiesStore()
 
 const selectedPlan = ref(Currency.UZS)
@@ -61,9 +63,9 @@ const plans = computed(() =>
 	Object.keys(strategiesStore.GET_ACTIVE_TARIFFS_BY_CURRENCY)
 )
 
-const investAmount = computed(() => {
-	return selectedPlan.value === Currency.UZS ? 1e6 : 1e3
-})
+const investAmount = computed(() =>
+	selectedPlan.value === Currency.UZS ? 1e6 : 1e3
+)
 
 const handleTermChange = (term: ITariff) => {
 	if (term.currency === Currency.UZS) selectedTerm.value[Currency.UZS] = term
@@ -78,8 +80,19 @@ watch(
 	{ immediate: true }
 )
 
+const createGoal = async () => {
+	await investmentsStore.createInvestment({
+		term: selectedTerm.value[selectedPlan.value]?.terms,
+		strategy_id: strategiesStore.strategies[0].guid,
+		tariff_id: selectedTerm.value[selectedPlan.value]?.guid
+	})
+
+	router.push({ path: '/goal-created', query: { plan: selectedPlan.value } })
+}
+
 onMounted(async () => {
 	await strategiesStore.getTariffs({ limit: 100 })
+	await strategiesStore.getStrategies()
 	selectedTerm.value[selectedPlan.value] = terms.value[selectedPlan.value][0]
 	selectedTerm.value[Currency.USD] = terms.value[Currency.USD][0]
 })
@@ -96,7 +109,6 @@ onMounted(async () => {
 							<div class="radioGroup">
 								<div class="tariffItemDesc">
 									<Icon :icon="plan" />
-
 									<div>
 										<h3>{{ tariffTitle(plan) }}</h3>
 										<p>
@@ -167,14 +179,14 @@ onMounted(async () => {
 								calculateProfitability({
 									isCapitalized,
 									isDollar: selectedPlan === Currency.USD,
-									tariff: selectedTerm[selectedPlan],
+									tariff: selectedTerm[selectedPlan]!,
 									initialAmount: investAmount
 								}).forecast
 							}}%
 						</span>
 						за весь срок
 					</div>
-					<AboutPlans />
+					<i class="icon-info text-[18px] text-neutral/50" />
 				</div>
 				<div class="flex items-center justify-between">
 					<div
@@ -202,7 +214,7 @@ onMounted(async () => {
 									calculateProfitability({
 										isCapitalized,
 										isDollar: selectedPlan === Currency.USD,
-										tariff: selectedTerm[selectedPlan],
+										tariff: selectedTerm[selectedPlan]!,
 										initialAmount: investAmount
 									}).result,
 									'ru-RR',
@@ -213,16 +225,8 @@ onMounted(async () => {
 					</div>
 				</div>
 			</Card>
-			<Card class="card flex justify-between items-center gap-3">
-				<div
-					class="flex w-[90%] items-center gap-[18px] font-medium text-[15px] leading-[20px]"
-				>
-					<i class="icon-suitcase text-blue text-[18px]" />Как мы управляем
-					вашими деньгами?
-				</div>
-				<i class="icon-chevron-right text-neutral/50" />
-			</Card>
-			<IncomeCalc />
+
+			<AboutPlans />
 		</div>
 
 		<div class="totalText">
@@ -254,28 +258,6 @@ onMounted(async () => {
 	gap: 12px;
 }
 
-.card {
-	@apply bg-neutral/[0.06] rounded-2xl p-4;
-}
-.tariffItem {
-	display: flex;
-	justify-content: space-between;
-	align-items: center;
-	box-sizing: border-box;
-	position: relative;
-
-	& input[type='radio'] {
-		@apply hidden;
-	}
-
-	& input[type='radio']:checked ~ .radioIcon {
-		@apply border-[#3680ff] border-solid border-[3px];
-	}
-
-	& input[type='radio']:checked ~ .radioIcon:after {
-		@apply opacity-100;
-	}
-}
 .radioGroup {
 	width: 100%;
 	height: 100%;
@@ -285,33 +267,6 @@ onMounted(async () => {
 	align-items: center;
 	grid-gap: 8px;
 	padding-right: 30px;
-}
-
-.radioIcon {
-	box-sizing: border-box;
-	position: absolute;
-	top: 50%;
-	right: 16px;
-	transform: translateY(-50%);
-	height: 20px;
-	width: 20px;
-	border-radius: 50%;
-	border: 2px solid #999999ff;
-	transition: 0.2s all 0s;
-
-	&:after {
-		position: absolute;
-		top: 50%;
-		left: 50%;
-		transform: translate(-50%, -50%);
-		content: '';
-		width: 11.4px;
-		height: 11.4px;
-		border-radius: 50%;
-		opacity: 0;
-		background-color: #3680ff;
-		transition: all 0.2s;
-	}
 }
 
 .tariffItemDesc {

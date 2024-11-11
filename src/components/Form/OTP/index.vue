@@ -37,13 +37,13 @@ const enum KEY_CODE {
 	Down = 40
 }
 const randomNumber = Math.floor(Math.random() * 101)
-const values = ref([])
-const iRefs = ref([])
-const inputs = ref([])
+const values = ref<string[]>([])
+const iRefs = ref<number[]>([])
+const inputs = ref<(HTMLInputElement | null)[]>([])
 const fields = toRef(props, 'fields')
 const autoFocusIndex = ref(0)
 const autoFocus = true
-const activeIndex = ref(0)
+const activeIndex = ref<number | null>(0)
 
 const initVals = () => {
 	let vals
@@ -63,19 +63,23 @@ const initVals = () => {
 	}
 	values.value = vals
 }
-const onFocus = (e, index) => {
+const onFocus = (e: FocusEvent, index: number) => {
 	activeIndex.value = index
-	e.target.select(e)
+	const target = e.target as HTMLInputElement
+	if (target) {
+		target.select()
+	}
 }
-const onValueChange = e => {
-	const index = parseInt(e.target.dataset.id)
-	e.target.value = e.target.value.replace(/[^\d]/gi, '')
+const onValueChange = (e: Event) => {
+	const target = e.target as HTMLInputElement
+	const index = parseInt(target.dataset.id || '0')
+	target.value = target.value.replace(/[^\d]/gi, '')
 	// this.handleKeys[index] = false;
-	if (e.target.value === '' || !e.target.validity.valid) {
+	if (target.value === '' || !target.validity.valid) {
 		return
 	}
 	let next
-	const value = e.target.value
+	const value = target.value
 	values.value = Object.assign([], values.value)
 	if (value.length > 1) {
 		let nextIndex = value.length + index - 1
@@ -95,14 +99,15 @@ const onValueChange = e => {
 		values.value[index] = value
 	}
 	if (next) {
-		const element = inputs.value[next]
+		const element = inputs.value[next] as HTMLInputElement
 		element.focus()
 		element.select()
 	}
 	triggerChange(values.value)
 }
-const onKeyDown = e => {
-	const index = parseInt(e.target.dataset.id)
+const onKeyDown = (e: KeyboardEvent) => {
+	const target = e.target as HTMLInputElement
+	const index = parseInt(target.dataset.id)
 	const prevIndex = index - 1
 	const nextIndex = index + 1
 	const prev = iRefs.value[prevIndex]
@@ -143,8 +148,8 @@ const onKeyDown = e => {
 			break
 	}
 }
-const triggerChange = (values = values.value) => {
-	const val = values.join('')
+const triggerChange = (vals = values.value) => {
+	const val = vals.join('')
 	emit('update:modelValue', val)
 	if (val.length >= fields.value) {
 		emit('complete', val)
@@ -156,8 +161,11 @@ initVals()
 watch(
 	() => props.step,
 	newValue => {
+		const inputElement = document.getElementById(
+			`verification-input-${randomNumber}`
+		)
 		if (newValue === 2) {
-			document.getElementById(`verification-input-${randomNumber}`).autofocus
+			inputElement.autofocus = true
 		}
 	},
 	{ immediate: true }
@@ -176,9 +184,9 @@ onMounted(() => {
 	})
 })
 
-const pasteDigits = e => {
+const pasteDigits = (e: ClipboardEvent) => {
 	e.preventDefault()
-	const pastedData = e.clipboardData.getData('text')
+	const pastedData = e.clipboardData!.getData('text')
 	const otpRegex = new RegExp(`^\\d{${props.fields}}$`)
 
 	if (otpRegex.test(pastedData)) {
@@ -197,7 +205,7 @@ const pasteDigits = e => {
 			:id="`verification-input-${randomNumber + index}`"
 			:ref="
 				el => {
-					if (el) inputs[index + 1] = el
+					if (el) inputs[index + 1] = el as HTMLInputElement
 				}
 			"
 			required

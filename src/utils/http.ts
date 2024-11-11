@@ -4,7 +4,8 @@ import { useWebAppCloudStorage } from 'vue-tg'
 import { Token, StatusCode } from '@/types/enums.ts'
 
 let isAlreadyFetchingAccessToken = false
-let subscribers = []
+
+let subscribers: ((accessToken: string) => void)[] = []
 
 const { setStorageItem, getStorageItem } = useWebAppCloudStorage()
 
@@ -55,7 +56,7 @@ axiosIns.interceptors.response.use(
 				})
 			} else if (
 				isAlreadyFetchingAccessToken &&
-				config.url === 'investor/refresh-token'
+				config.url === '/v1/investor/refresh-token'
 			) {
 				// logout()
 				console.log('logout')
@@ -82,7 +83,7 @@ axiosIns.interceptors.response.use(
 )
 
 async function refreshToken() {
-	return axiosIns.post('investor/refresh-token', {
+	return axiosIns.post('/v1/investor/refresh-token', {
 		refresh_token: await getStorageItem(Token.RefreshToken)
 	})
 }
@@ -90,7 +91,7 @@ async function refreshToken() {
 function onAccessTokenFetched(accessToken: string) {
 	subscribers = subscribers.filter(callback => callback(accessToken))
 }
-function addSubscriber(callback) {
+function addSubscriber(callback: (accessToken: string) => void) {
 	subscribers.push(callback)
 }
 

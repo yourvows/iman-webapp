@@ -1,47 +1,29 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import { loadLayoutMiddleware } from '@/middleware'
-import { defineAsyncComponent } from 'vue'
-
-const Index = defineAsyncComponent(() => import('@/pages/index.vue'))
-const AuthLogin = defineAsyncComponent(() => import('@/pages/auth/index.vue'))
-const AuthPin = defineAsyncComponent(() => import('@/pages/auth/Pin.vue'))
-const Home = defineAsyncComponent(() => import('@/pages/home/index.vue'))
-const GoalAdd = defineAsyncComponent(() => import('@/pages/goal/add/index.vue'))
-const GoalSelectPlan = defineAsyncComponent(
-	() => import('@/pages/goal/select-plan/index.vue')
-)
+import { goalRoutes } from '@/router/goal'
 
 const routes = [
 	{
 		path: '/',
 		name: 'index',
-		component: () => Index
+		component: () => import('@/pages/index.vue')
 	},
 	{
 		path: '/auth/login',
 		name: 'Number',
-		component: AuthLogin
+		component: () => import('@/pages/auth/index.vue')
 	},
 	{
 		path: '/auth/pin',
 		name: 'Pin',
-		component: () => AuthPin
+		component: () => import('@/pages/auth/Pin.vue')
 	},
 	{
 		path: '/home',
 		name: 'Home',
-		component: () => Home
+		component: () => import('@/pages/home/index.vue')
 	},
-	{
-		path: '/goal-add',
-		name: 'Goal',
-		component: () => GoalAdd
-	},
-	{
-		path: '/goal-select-plan',
-		name: 'GoalSelectPlan',
-		component: () => GoalSelectPlan
-	}
+	...goalRoutes
 ]
 
 const router = createRouter({

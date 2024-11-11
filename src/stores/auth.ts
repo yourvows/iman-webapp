@@ -5,7 +5,7 @@ import {
 	IRefreshTokenResponse,
 	ISendOtpResponse,
 	IUpdateResponse
-} from '@/types/auth.ts'
+} from '@/types/auth.type.ts'
 import { Token, AuthTypes, StatusCode } from '@/types/enums.ts'
 import { useWebAppCloudStorage } from 'vue-tg'
 
@@ -50,7 +50,7 @@ export const useAuthStore = defineStore('auth', {
 		}): Promise<IConfirmOtpResponse> {
 			return new Promise((resolve, reject) => {
 				http
-					.post<IConfirmOtpResponse>('/investor/confirm-otp', params)
+					.post<IConfirmOtpResponse>('/v1/investor/confirm-otp', params)
 					.then(({ data }) => {
 						setStorageItem(Token.AccessToken, data.access_token)
 						setStorageItem(Token.RefreshToken, data.refresh_token)
@@ -69,10 +69,8 @@ export const useAuthStore = defineStore('auth', {
 		}): Promise<IRefreshTokenResponse> {
 			return new Promise((resolve, reject) => {
 				http
-					.post('/investor/refresh-token', params)
-					.then(({ data }) => {
-						resolve(data)
-					})
+					.post('/v1/investor/refresh-token', params)
+					.then(({ data }) => resolve(data))
 					.catch(err => reject(err))
 			})
 		},
@@ -82,10 +80,8 @@ export const useAuthStore = defineStore('auth', {
 		}): Promise<IUpdateResponse> {
 			return new Promise((resolve, reject) => {
 				http
-					.put('/investor/update/email', params)
-					.then(({ data }) => {
-						resolve(data)
-					})
+					.put('/v1/investor/update/email', params)
+					.then(({ data }) => resolve(data))
 					.catch(err => reject(err))
 			})
 		},
@@ -95,10 +91,8 @@ export const useAuthStore = defineStore('auth', {
 		}): Promise<IUpdateResponse> {
 			return new Promise((resolve, reject) => {
 				http
-					.put<IUpdateResponse>('/investor/update/phone-number', params)
-					.then(({ data }) => {
-						resolve(data)
-					})
+					.put('/v1/investor/update/phone-number', params)
+					.then(({ data }) => resolve(data))
 					.catch(err => reject(err))
 			})
 		}
