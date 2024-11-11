@@ -21,7 +21,22 @@ export default defineConfig({
 			'/api': {
 				target: process.env.VITE_API_URL,
 				changeOrigin: true,
-				rewrite: path => path.replace(/^\/api/, '')
+				rewrite: path => path.replace(/^\/api/, ''),
+				configure: (proxy, _) => {
+					proxy.on('error', (err, _req, _res) => {
+						console.log('error', err)
+					})
+					proxy.on('proxyReq', (_, req, _res) => {
+						console.log('Request sent to target:', req.method, req.url)
+					})
+					proxy.on('proxyRes', (proxyRes, req, _res) => {
+						console.log(
+							'Response received from target:',
+							proxyRes.statusCode,
+							req.url
+						)
+					})
+				}
 			}
 		}
 	},

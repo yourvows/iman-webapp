@@ -2,7 +2,7 @@
 import { computed } from 'vue'
 
 const props = defineProps<{
-	variant: 'primary' | 'secondary' | 'transparent'
+	variant: 'primary' | 'secondary' | 'transparent' | 'white'
 }>()
 
 const buttonClass = computed(() => {
@@ -29,7 +29,10 @@ const buttonClass = computed(() => {
 .secondary {
 	@apply bg-neutral text-blue;
 }
+.white {
+	@apply bg-white text-blue;
+}
 .transparent {
-	@apply bg-transparent text-blue;
+	@apply bg-white/10 text-white;
 }
 </style>

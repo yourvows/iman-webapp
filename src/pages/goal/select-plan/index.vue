@@ -8,10 +8,12 @@ import { Icon, Card } from '@/components/Base'
 import { AboutPlans } from '@/pages/goal/select-plan/components'
 import { calculateProfitability, formatMoney } from '@/utils'
 import { useStrategiesStore } from '@/stores/strategies.ts'
-import { Currency, ITariff } from '@/types/strategies.ts'
+import { Currency, ITariff } from '@/types/strategies.type.ts'
+import { useInvestmentsStore } from '@/stores/investments.ts'
 
 const { MainButton, BackButton } = useTelegram()
 const router = useRouter()
+const investmentsStore = useInvestmentsStore()
 const strategiesStore = useStrategiesStore()
 
 const selectedPlan = ref(Currency.UZS)
@@ -79,13 +81,26 @@ watch(
 	{ immediate: true }
 )
 
+const createGoal = async () => {
+	await investmentsStore.createInvestment({
+		term: selectedTerm.value[selectedPlan.value]?.terms,
+		strategy_id: strategiesStore.strategies[0].guid,
+		tariff_id: selectedTerm.value[selectedPlan.value]?.guid
+	})
+
+	router.push({ path: '/goal-created', query: { plan: selectedPlan.value } })
+}
+
 onMounted(async () => {
 	await strategiesStore.getTariffs({ limit: 100 })
+	await strategiesStore.getStrategies()
 	selectedTerm.value[selectedPlan.value] = terms.value[selectedPlan.value][0]
 	selectedTerm.value[Currency.USD] = terms.value[Currency.USD][0]
 	MainButton.text = 'Открыть вклад'
 	MainButton.show()
-	BackButton.onClick(() => router.push('/goal-add'))
+	BackButton.show()
+	MainButton.onClick(createGoal)
+	BackButton.onClick(() => router.push('/home'))
 })
 </script>
 
@@ -247,25 +262,6 @@ onMounted(async () => {
 	gap: 12px;
 }
 
-.tariffItem {
-	display: flex;
-	justify-content: space-between;
-	align-items: center;
-	box-sizing: border-box;
-	position: relative;
-
-	& input[type='radio'] {
-		@apply hidden;
-	}
-
-	& input[type='radio']:checked ~ .radioIcon {
-		@apply border-[#3680ff] border-solid border-[3px];
-	}
-
-	& input[type='radio']:checked ~ .radioIcon:after {
-		@apply opacity-100;
-	}
-}
 .radioGroup {
 	width: 100%;
 	height: 100%;
@@ -275,33 +271,6 @@ onMounted(async () => {
 	align-items: center;
 	grid-gap: 8px;
 	padding-right: 30px;
-}
-
-.radioIcon {
-	box-sizing: border-box;
-	position: absolute;
-	top: 50%;
-	right: 16px;
-	transform: translateY(-50%);
-	height: 20px;
-	width: 20px;
-	border-radius: 50%;
-	border: 2px solid #999999ff;
-	transition: 0.2s all 0s;
-
-	&:after {
-		position: absolute;
-		top: 50%;
-		left: 50%;
-		transform: translate(-50%, -50%);
-		content: '';
-		width: 11.4px;
-		height: 11.4px;
-		border-radius: 50%;
-		opacity: 0;
-		background-color: #3680ff;
-		transition: all 0.2s;
-	}
 }
 
 .tariffItemDesc {

@@ -48,7 +48,7 @@ import { IncomeCalc } from '@/pages/goal/select-plan/components/index.ts'
 					</div>
 					<div class="flex flex-col gap-4 mb-6">
 						<IncomeCalc />
-						<Card class="card flex justify-between items-center gap-3">
+						<Card class="flex justify-between items-center gap-3">
 							<div
 								class="flex w-[90%] items-center gap-[18px] font-medium text-[15px] leading-[20px]"
 							>

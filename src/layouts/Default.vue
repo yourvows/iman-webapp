@@ -1,19 +1,14 @@
 <template>
 	<RouterView v-slot="{ Component }">
-		<Transition name="fade" mode="out-in">
+		<Transition
+			enter-active-class="transition-opacity duration-300 ease-in"
+			leave-active-class="transition-opacity duration-300 ease-in"
+			leave-to-class="opacity-0"
+			enter-from-class="opacity-0"
+			name="fade"
+			mode="out-in"
+		>
 			<component :is="Component" />
 		</Transition>
 	</RouterView>
 </template>
-
-<style>
-.fade-enter-active,
-.fade-leave-active {
-	transition: opacity 0.3s ease;
-}
-
-.fade-enter-from,
-.fade-leave-to {
-	opacity: 0;
-}
-</style>

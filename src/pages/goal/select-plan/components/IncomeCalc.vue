@@ -11,7 +11,7 @@ import {
 } from '@/components/ui/drawer'
 import { computed, ref } from 'vue'
 import { useStrategiesStore } from '@/stores/strategies.ts'
-import { ITariff } from '@/types/strategies.ts'
+import { ITariff } from '@/types/strategies.type.ts'
 
 const strategiesStore = useStrategiesStore()
 

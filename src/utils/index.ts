@@ -1,4 +1,4 @@
-import { Currency, ITariff } from '@/types/strategies.ts'
+import { Currency, ITariff } from '@/types/strategies.type.ts'
 
 /**
  * Masks a phone number by replacing the last two parts with asterisks.

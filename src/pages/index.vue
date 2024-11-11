@@ -52,13 +52,20 @@ onMounted(async () => {
 </script>
 
 <template>
-	<div class="splash">
+	<div class="splash bg-gradient-to-b from-[#0467FF] to-[#79A5FC] bg-blue">
 		<SplashScreen />
+
+		<p
+			class="absolute bottom-[48px] text-center text-white text-lg font-semibold leading-[23px]"
+		>
+			Халяльные инвестиции <br />
+			начинаются здесь
+		</p>
 	</div>
 </template>
 
 <style lang="postcss" scoped>
 .splash {
-	@apply z-[200] w-full h-full bg-white fixed top-0 left-0 flex items-center justify-center;
+	@apply z-[200] w-full h-full fixed top-0 left-0 flex items-center justify-center;
 }
 </style>

@@ -56,7 +56,7 @@ axiosIns.interceptors.response.use(
 				})
 			} else if (
 				isAlreadyFetchingAccessToken &&
-				config.url === 'investor/refresh-token'
+				config.url === '/v1/investor/refresh-token'
 			) {
 				// logout()
 				console.log('logout')
@@ -83,7 +83,7 @@ axiosIns.interceptors.response.use(
 )
 
 async function refreshToken() {
-	return axiosIns.post('investor/refresh-token', {
+	return axiosIns.post('/v1/investor/refresh-token', {
 		refresh_token: await getStorageItem(Token.RefreshToken)
 	})
 }

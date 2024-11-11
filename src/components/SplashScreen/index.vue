@@ -3,5 +3,5 @@ import { Icon } from '@/components/Base'
 </script>
 
 <template>
-	<Icon icon="splash" size="48px" color="#0088cc" />
+	<Icon icon="iman-logo" size="48px" color="#0088cc" />
 </template>

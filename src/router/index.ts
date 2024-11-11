@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import { loadLayoutMiddleware } from '@/middleware'
+import { goalRoutes } from '@/router/goal'
 
 const routes = [
 	{
@@ -22,16 +23,7 @@ const routes = [
 		name: 'Home',
 		component: () => import('@/pages/home/index.vue')
 	},
-	{
-		path: '/goal-add',
-		name: 'Goal',
-		component: () => import('@/pages/goal/add/index.vue')
-	},
-	{
-		path: '/goal-select-plan',
-		name: 'GoalSelectPlan',
-		component: () => import('@/pages/goal/select-plan/index.vue')
-	}
+	...goalRoutes
 ]
 
 const router = createRouter({
