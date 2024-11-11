@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { Card } from '@/components/Base'
+import { calculateProfitability, formatMoney } from '@/utils'
 import {
 	Drawer,
 	DrawerContent,
@@ -8,23 +9,20 @@ import {
 	DrawerTitle,
 	DrawerHeader
 } from '@/components/ui/drawer'
-import { terms } from '@/data/data.ts'
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
+import { useStrategiesStore } from '@/stores/strategies.ts'
+import { ITariff } from '@/types/strategies.ts'
 
-const income = ref('0')
-const amount = ref(1000)
-const percentage = ref(27)
-const selectedId = ref(3)
+const strategiesStore = useStrategiesStore()
 
-const handleTermChange = (id: number, percent: number) => {
-	selectedId.value = id
-	percentage.value = percent
-	calculateIncome(amount.value, percentage.value)
-}
+const amount = ref(1000000)
 
-const calculateIncome = (amount: number, percentage: number) => {
-	const calculatedIncome = (amount * percentage) / 100
-	income.value = calculatedIncome.toString()
+const terms = computed(() => strategiesStore.GET_ACTIVE_UZS_TARIFFS)
+
+const selectedTerm = ref(terms.value[0])
+
+const handleTermChange = (term: ITariff) => {
+	selectedTerm.value = term
 }
 </script>
 
@@ -49,27 +47,36 @@ const calculateIncome = (amount: number, percentage: number) => {
 				Прибыль меняется в зависимости от срока вклада
 			</DrawerDescription>
 			<div class="container">
-				<div class="flex gap-[12px] py-[24px]">
+				<div
+					class="flex first:pl-3 gap-[12px] py-[24px] overflow-x-auto no-scrollbar"
+				>
 					<div
 						v-for="(term, index) in terms"
-						:key="term.periodInMonth"
+						:key="term.guid"
 						:id="`term-${index + 1}`"
 						class="contentFormListItem"
-						:class="{ active: selectedId === index + 1 }"
-						@click="handleTermChange(index + 1, term.percent)"
+						:class="{
+							active: selectedTerm?.guid === term.guid
+						}"
+						@click="handleTermChange(term)"
 					>
-						{{ term.title }}
+						{{ term.terms }} мес
 					</div>
 				</div>
+
 				<Card class="flex mb-[16px] items-center justify-between">
 					<Card
-						class="flex bg-white flex-col text-[13px] font-medium leading-[18px] text-neutral"
+						class="flex w-[159px] bg-white flex-col text-[13px] font-medium leading-[18px] text-neutral"
 					>
 						Если вложить
-						<span class="text-black text-[16px] leading-[21px]"
-							>1 000 000 сум</span
-						>
+
+						<input
+							v-model="amount"
+							pattern="[0-9]*"
+							class="bg-transparent outline-none text-black text-[16px] leading-[21px]"
+						/>
 					</Card>
+
 					<div
 						class="flex border justify-center items-center size-6 rounded-full bg-white"
 					>
@@ -77,11 +84,21 @@ const calculateIncome = (amount: number, percentage: number) => {
 					</div>
 
 					<Card
-						class="flex bg-white flex-col text-[13px] font-medium leading-[18px] text-neutral"
+						class="flex w-[159px] bg-white text-left flex-col text-[13px] font-medium leading-[18px] text-neutral"
 					>
 						Ваша прибыль
-						<span class="text-[#10C44C] text-right text-[16px] leading-[21px]"
-							>+540 000</span
+						<span class="text-[#10C44C] text-[16px] leading-[21px]"
+							>+{{
+								formatMoney(
+									calculateProfitability({
+										initialAmount: amount,
+										isDollar: false,
+										isCapitalized: false,
+										tariff: selectedTerm
+									}).result,
+									'ru-RR'
+								)
+							}}</span
 						>
 					</Card>
 				</Card>
@@ -92,13 +109,11 @@ const calculateIncome = (amount: number, percentage: number) => {
 
 <style scoped lang="postcss">
 .contentFormListItem {
-	cursor: pointer;
 	font-weight: 500;
 	letter-spacing: -0.01em;
 	line-height: 21px;
-	text-align: left;
-	@apply px-[14px] py-[12px] rounded-[12px] text-neutral/60;
-	width: 79px;
+	@apply rounded-[12px] flex items-center justify-center text-neutral/60 cursor-pointer;
+	min-width: 79px;
 	height: 45px;
 
 	background-color: #f4f4f5;
