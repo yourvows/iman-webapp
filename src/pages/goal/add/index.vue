@@ -1,18 +1,9 @@
 <script setup lang="ts">
-import { onMounted } from 'vue'
-import { useTelegram } from '@/composables/useTelegram.ts'
+import { BackButton, MainButton } from 'vue-tg'
 import { goalAbout } from '@/data/data.ts'
 import { useRouter } from 'vue-router'
 
-const { MainButton, BackButton } = useTelegram()
 const router = useRouter()
-
-onMounted(() => {
-	MainButton.show()
-	BackButton.show()
-	BackButton.onClick(() => router.push('/home'))
-	MainButton.onClick(() => router.push('/goal-select-plan'))
-})
 </script>
 
 <template>
@@ -40,6 +31,11 @@ onMounted(() => {
 				</ul>
 			</div>
 		</div>
+		<BackButton @click="() => router.push('/home')" />
+		<MainButton
+			@click="() => router.push('/goal-select-plan')"
+			text="Продолжить"
+		/>
 	</div>
 </template>
 

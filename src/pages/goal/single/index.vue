@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useRoute, useRouter } from 'vue-router'
-import { useTelegram } from '@/composables/useTelegram.ts'
+import { BackButton } from 'vue-tg'
 import { computed, onMounted } from 'vue'
 import { Header } from '@/components/Layout'
 import { InfoTab } from '@/components/Base'
@@ -8,7 +8,6 @@ import { useInvestmentsStore } from '@/stores/investments.ts'
 import { Currency } from '@/types/strategies.type.ts'
 import { Warning } from './components'
 
-const { BackButton } = useTelegram()
 const route = useRoute()
 const router = useRouter()
 const investmentsStore = useInvestmentsStore()
@@ -22,8 +21,6 @@ const currentGoal = computed(() => {
 
 onMounted(async () => {
 	await investmentsStore.getInvestments()
-	BackButton.show()
-	BackButton.onClick(() => router.back())
 })
 </script>
 
@@ -58,5 +55,6 @@ onMounted(async () => {
 			<Warning />
 		</section>
 		<pre class="text-[12px]">{{ currentGoal }}</pre>
+		<BackButton @click="() => router.push('/home')" />
 	</div>
 </template>

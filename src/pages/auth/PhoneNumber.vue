@@ -1,16 +1,15 @@
 <script setup lang="ts">
-import { onMounted, ref } from 'vue'
+import { ref } from 'vue'
 import { useAuthStore } from '@/stores/auth'
 import { vMaska } from 'maska/vue'
 import { Icon } from '@/components/Base'
-import { useTelegram } from '@/composables/useTelegram.ts'
+import { MainButton } from 'vue-tg'
 
 const emit = defineEmits<{
 	(e: 'action', action: 'next' | 'back'): void
 }>()
 
 const authStore = useAuthStore()
-const { MainButton, BackButton } = useTelegram()
 
 const isValid = ref(true)
 const isKeyboardOpen = ref(false)
@@ -39,16 +38,6 @@ async function sendOtpRequest(number: string) {
 	})
 	emit('action', 'next')
 }
-
-onMounted(() => {
-	if (BackButton.isVisible) {
-		BackButton.hide()
-	}
-	MainButton.text = 'Продолжить'
-	MainButton.color = '#3680FF'
-	MainButton.onClick(nextPage)
-	MainButton.show()
-})
 </script>
 
 <template>
@@ -81,6 +70,7 @@ onMounted(() => {
 				<span class="text-blue">оффертой</span>
 			</p>
 		</div>
+		<MainButton text="Продолжить" @click="nextPage" />
 	</div>
 </template>
 

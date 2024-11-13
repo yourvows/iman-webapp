@@ -1,18 +1,11 @@
 <script setup lang="ts">
 import { VButton } from '@/components/Base'
 import { useRouter, useRoute } from 'vue-router'
-import { onMounted } from 'vue'
 import { Currency } from '@/types/strategies.type.ts'
-import { useTelegram } from '@/composables/useTelegram.ts'
+import { BackButton } from 'vue-tg'
 
 const router = useRouter()
 const route = useRoute()
-const { MainButton, BackButton } = useTelegram()
-
-onMounted(() => {
-	MainButton.hide()
-	BackButton.onClick(() => router.push('/home'))
-})
 </script>
 
 <template>
@@ -46,7 +39,13 @@ onMounted(() => {
 		</div>
 		<div class="w-full space-y-3">
 			<VButton variant="white" class="w-full">Пополнить</VButton>
-			<VButton variant="transparent" class="w-full">Пополнить позже</VButton>
+			<VButton
+				@click="() => router.push('/home')"
+				variant="transparent"
+				class="w-full"
+				>Пополнить позже</VButton
+			>
 		</div>
+		<BackButton @click="() => router.push('/home')" />
 	</div>
 </template>

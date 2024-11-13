@@ -11,5 +11,16 @@
     <div id="app"></div>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script type="module" src="/src/main.ts"></script>
+	<script>
+		const webApp = Telegram.WebApp
+		webApp.ready()
+		webApp.expand()
+		webApp.enableClosingConfirmation()
+		webApp.enableVerticalSwipes()
+		webApp.themeParams.button_color = '#3680FF'
+		webApp.themeParams.button_text_color = '#ffffff'
+		webApp.themeParams.secondary_bg_color = '#ffffff'
+
+	</script>
   </body>
 </html>

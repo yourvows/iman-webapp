@@ -2,7 +2,6 @@
 import { Switch } from '@/components/ui/switch'
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 import { computed, onMounted, ref, watch } from 'vue'
-import { useTelegram } from '@/composables/useTelegram.ts'
 import { useRouter } from 'vue-router'
 import { Card } from '@/components/Base'
 import { AboutPlans } from '@/pages/goal/select-plan/components'
@@ -10,8 +9,8 @@ import { calculateProfitability, formatMoney } from '@/utils'
 import { useStrategiesStore } from '@/stores/strategies.ts'
 import { Currency, ITariff } from '@/types/strategies.type.ts'
 import { useInvestmentsStore } from '@/stores/investments.ts'
+import { BackButton, MainButton } from 'vue-tg'
 
-const { MainButton, BackButton } = useTelegram()
 const router = useRouter()
 const investmentsStore = useInvestmentsStore()
 const strategiesStore = useStrategiesStore()
@@ -96,11 +95,6 @@ onMounted(async () => {
 	await strategiesStore.getStrategies()
 	selectedTerm.value[selectedPlan.value] = terms.value[selectedPlan.value][0]
 	selectedTerm.value[Currency.USD] = terms.value[Currency.USD][0]
-	MainButton.text = 'Открыть вклад'
-	MainButton.show()
-	BackButton.show()
-	MainButton.onClick(createGoal)
-	BackButton.onClick(() => router.push('/home'))
 })
 </script>
 
@@ -244,6 +238,8 @@ onMounted(async () => {
 			<span>Открывая вклад, вы соглашаетесь с </span>
 			<span class="condition">условиями</span>
 		</div>
+		<BackButton @click="() => router.push('/goal-add')" />
+		<MainButton text="Открыть вклад" @click="createGoal" />
 	</div>
 </template>
 

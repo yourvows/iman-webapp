@@ -3,13 +3,12 @@ import { OTP } from '@/components/Form'
 import { computed, onMounted, ref } from 'vue'
 import { useAuthStore } from '@/stores/auth'
 import { maskPhoneNumber } from '@/utils'
-import { useTelegram } from '@/composables/useTelegram.ts'
+import { BackButton } from 'vue-tg'
 
 const emit = defineEmits<{
 	(e: 'action', action: 'next' | 'back'): void
 }>()
 
-const { BackButton, MainButton } = useTelegram()
 const authStore = useAuthStore()
 
 const secondsLeft = ref(60)
@@ -29,12 +28,6 @@ function onComplete(code: string) {
 }
 
 onMounted(() => {
-	if (MainButton.isVisible) {
-		MainButton.hide()
-	}
-	BackButton.show()
-	BackButton.onClick(goBack)
-
 	const timer = setInterval(() => {
 		if (secondsLeft.value > 0) {
 			secondsLeft.value = secondsLeft.value - 1
@@ -77,6 +70,7 @@ onMounted(() => {
 			<button class="helpButton">Проблемы со входом?</button>
 		</div>
 	</div>
+	<BackButton @click="goBack" />
 </template>
 
 <style scoped lang="postcss">

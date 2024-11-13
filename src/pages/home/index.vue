@@ -2,21 +2,17 @@
 import { VButton } from '@/components/Base'
 import { Header } from '@/components/Layout'
 import { computed, onMounted } from 'vue'
-import { useTelegram } from '@/composables/useTelegram.ts'
 import { useInvestmentsStore } from '@/stores/investments.ts'
 import { useRouter } from 'vue-router'
 import Goal from './components/Goal.vue'
 
-const { MainButton, BackButton } = useTelegram()
 const investmentsStore = useInvestmentsStore()
 
 const investments = computed(() => investmentsStore.investments)
 const router = useRouter()
 
-onMounted(async () => {
-	await investmentsStore.getInvestments()
-	MainButton.hide()
-	BackButton.hide()
+onMounted(() => {
+	investmentsStore.getInvestments()
 })
 </script>
 
