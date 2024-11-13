@@ -1,15 +1,25 @@
-import { RouteLocation } from 'vue-router'
+import {
+	NavigationGuardNext,
+	RouteLocation,
+	RouteLocationNormalized
+} from 'vue-router'
 
-export async function loadLayoutMiddleware(route: RouteLocation) {
+export async function loadLayoutMiddleware(
+	to: RouteLocation,
+	_: RouteLocationNormalized,
+	next: NavigationGuardNext
+) {
 	try {
-		const layout = route.meta.layout || 'Default'
+		console.log(to)
+		const layout = to.meta.layout || 'Default'
 		const layoutComponent = await import(`@/layouts/${layout}.vue`)
-		route.meta.layoutComponent = layoutComponent.default
+		to.meta.layoutComponent = layoutComponent.default
 	} catch (e) {
 		console.error('Error occurred in processing of layouts: ', e)
 		console.log('Mounted default layout AppLayoutDefault')
 		const layout = 'Default'
 		const layoutComponent = await import(`@/layouts/${layout}.vue`)
-		route.meta.layoutComponent = layoutComponent.default
+		to.meta.layoutComponent = layoutComponent.default
 	}
+	next()
 }

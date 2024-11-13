@@ -31,12 +31,12 @@ const router = useRouter()
 				</ul>
 			</div>
 		</div>
+		<BackButton @click="() => router.push('/home')" />
+		<MainButton
+			@click="() => router.push('/goal-select-plan')"
+			text="Продолжить"
+		/>
 	</div>
-	<BackButton @click="() => router.push('/home')" />
-	<MainButton
-		@click="() => router.push('/goal-select-plan')"
-		text="Продолжить"
-	/>
 </template>
 
 <style scoped lang="postcss">

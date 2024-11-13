@@ -3,7 +3,7 @@ import { Switch } from '@/components/ui/switch'
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 import { computed, onMounted, ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
-import { Icon, Card } from '@/components/Base'
+import { Card } from '@/components/Base'
 import { AboutPlans } from '@/pages/goal/select-plan/components'
 import { calculateProfitability, formatMoney } from '@/utils'
 import { useStrategiesStore } from '@/stores/strategies.ts'
@@ -108,7 +108,12 @@ onMounted(async () => {
 						<label class="flex items-center" :for="`r-${index + 1}`">
 							<div class="radioGroup">
 								<div class="tariffItemDesc">
-									<Icon :icon="plan" />
+									<img
+										v-if="plan === Currency.UZS"
+										src="@/assets/icons/uzs.svg"
+										alt="uzs"
+									/>
+									<img v-else src="@/assets/icons/usd.svg" alt="usd" />
 									<div>
 										<h3>{{ tariffTitle(plan) }}</h3>
 										<p>
@@ -233,9 +238,9 @@ onMounted(async () => {
 			<span>Открывая вклад, вы соглашаетесь с </span>
 			<span class="condition">условиями</span>
 		</div>
+		<BackButton @click="() => router.push('/goal-add')" />
+		<MainButton text="Открыть вклад" @click="createGoal" />
 	</div>
-	<BackButton @click="() => router.push('/goal-add')" />
-	<MainButton text="Открыть вклад" />
 </template>
 
 <style scoped lang="postcss">

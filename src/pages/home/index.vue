@@ -1,8 +1,10 @@
 <script setup lang="ts">
-import { Icon, VButton, Card } from '@/components/Base'
+import { VButton } from '@/components/Base'
+import { Header } from '@/components/Layout'
 import { computed, onMounted } from 'vue'
 import { useInvestmentsStore } from '@/stores/investments.ts'
 import { useRouter } from 'vue-router'
+import Goal from './components/Goal.vue'
 
 const investmentsStore = useInvestmentsStore()
 
@@ -15,19 +17,11 @@ onMounted(() => {
 </script>
 
 <template>
-	<div class="wrapper">
-		<div class="top">
-			<div class="topHeader">
-				<i class="icon-chat text-white text-[19px]" />
-				<div class="contentHeader">
-					<i class="icon-wallet text-white/50" />
-					<h3>Общий баланс</h3>
-				</div>
-				<Icon icon="gift" />
-			</div>
+	<div class="wrapper bg-neutral/10">
+		<Header>
 			<div class="content">
 				<h3 class="contentBalance">0 <span>сум</span></h3>
-				<div class="contentProfit mb-6">
+				<div class="contentProfit">
 					<h3 class="contentProfitTitle">
 						Нет вложений, чтобы начислять прибыль
 					</h3>
@@ -43,7 +37,7 @@ onMounted(() => {
 			<!--					<i class="icon-x text-[7px] text-center text-neutral" />-->
 			<!--				</div>-->
 			<!--			</div>-->
-		</div>
+		</Header>
 
 		<div class="body mt-4 container">
 			<div
@@ -59,25 +53,11 @@ onMounted(() => {
 						+ Добавить
 					</button>
 				</div>
-
-				<Card
-					class="w-full flex justify-between items-center gap-3"
-					v-for="investment in investments"
-					:key="investment.guid"
-				>
-					<div
-						class="flex w-[90%] items-center gap-[18px] font-medium text-[15px] leading-[20px]"
-					>
-						<i class="icon-suitcase text-blue text-[18px]" />Как мы управляем
-						вашими деньгами?
-					</div>
-					<i class="icon-chevron-right text-neutral/50" />
-					{{ investment.investment_status }}
-				</Card>
+				<Goal :investments />
 			</div>
 			<div v-else class="goalEmpty">
 				<div class="goalEmptyIcon">
-					<Icon icon="no-purpose" />
+					<img src="@/assets/icons/no-purpose.svg" alt="no-purpose" />
 				</div>
 				<div class="goalEmptyTexts">
 					<h3>У вас пока нет целей</h3>
@@ -99,30 +79,12 @@ onMounted(() => {
 	@apply h-dvh flex flex-col overflow-y-auto;
 }
 
-.top {
-	@apply w-full bg-[url("@/assets/images/home-bg-2.png")] bg-cover bg-center bg-no-repeat rounded-b-[16px] p-1 pt-4;
-}
-
 .rocket {
 	@apply inline-flex justify-center items-center size-[48px] rounded-[50%] bg-[#f4f4f5];
 }
 
-.topHeader {
-	@apply p-0 px-4 flex items-center justify-between;
-}
-
 .content {
 	@apply mt-2.5 flex flex-col items-center;
-}
-
-.contentHeader {
-	@apply flex items-center gap-2;
-	svg {
-		@apply size-[16px];
-	}
-	h3 {
-		@apply leading-5 text-[14px] text-white/50 font-semibold;
-	}
 }
 
 .contentBalance {

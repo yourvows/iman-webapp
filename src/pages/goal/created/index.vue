@@ -39,8 +39,13 @@ const route = useRoute()
 		</div>
 		<div class="w-full space-y-3">
 			<VButton variant="white" class="w-full">Пополнить</VButton>
-			<VButton variant="transparent" class="w-full">Пополнить позже</VButton>
+			<VButton
+				@click="() => router.push('/home')"
+				variant="transparent"
+				class="w-full"
+				>Пополнить позже</VButton
+			>
 		</div>
+		<BackButton @click="() => router.push('/home')" />
 	</div>
-	<BackButton @click="() => router.push('/home')" />
 </template>

@@ -70,8 +70,8 @@ async function sendOtpRequest(number: string) {
 				<span class="text-blue">оффертой</span>
 			</p>
 		</div>
+		<MainButton text="Продолжить" @click="nextPage" />
 	</div>
-	<MainButton text="Продолжить" @click="nextPage" />
 </template>
 
 <style scoped lang="postcss">

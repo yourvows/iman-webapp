@@ -6,7 +6,10 @@ export const useInvestmentsStore = defineStore('investments', {
 	state: () => ({
 		investments: [] as IInvestment[]
 	}),
-	getters: {},
+	getters: {
+		GET_GOAL_BY_ID: state => (id: string) =>
+			state.investments.find(el => el.guid === id)
+	},
 	actions: {
 		getInvestments(): Promise<IInvestment[]> {
 			return new Promise((resolve, reject) => {
