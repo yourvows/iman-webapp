@@ -11,7 +11,7 @@ const { MainButton, BackButton } = useTelegram()
 
 onMounted(() => {
 	MainButton.hide()
-	BackButton.onClick(() => router.push('/ome'))
+	BackButton.onClick(() => router.push('/home'))
 })
 </script>
 

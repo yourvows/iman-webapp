@@ -1,8 +1,8 @@
-import { createRouter, createWebHistory } from 'vue-router'
+import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router'
 import { loadLayoutMiddleware } from '@/middleware'
 import { goalRoutes } from '@/router/goal'
 
-const routes = [
+const routes: Readonly<RouteRecordRaw[]> = [
 	{
 		path: '/',
 		name: 'index',

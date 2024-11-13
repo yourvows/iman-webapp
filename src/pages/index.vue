@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { useRouter } from 'vue-router'
 import { onMounted, ref } from 'vue'
-import { SplashScreen } from '@/components'
 import { Token } from '@/types/enums.ts'
 import { useWebAppCloudStorage } from 'vue-tg'
 
@@ -53,7 +52,7 @@ onMounted(async () => {
 
 <template>
 	<div class="splash bg-gradient-to-b from-[#0467FF] to-[#79A5FC] bg-blue">
-		<SplashScreen />
+		<img src="@/assets/icons/iman-logo.svg" alt="iman-logo" />
 
 		<p
 			class="absolute bottom-[48px] text-center text-white text-lg font-semibold leading-[23px]"
