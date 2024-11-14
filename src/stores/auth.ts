@@ -30,7 +30,7 @@ export const useAuthStore = defineStore('auth', {
 		}): Promise<ISendOtpResponse> {
 			return new Promise((resolve, reject) => {
 				http
-					.post<ISendOtpResponse>('/investor/send-otp', params, {
+					.post<ISendOtpResponse>('/v1/investor/send-otp', params, {
 						headers: {
 							'Otp-Secret':
 								'SU1BTl9JTlZFU1Q6OGRhYTY3ZGMtYjdlZi00NjAwLThmOWMtNzRhODAxZTQ5NDcy'

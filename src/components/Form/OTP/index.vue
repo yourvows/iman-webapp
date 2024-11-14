@@ -107,7 +107,7 @@ const onValueChange = (e: Event) => {
 }
 const onKeyDown = (e: KeyboardEvent) => {
 	const target = e.target as HTMLInputElement
-	const index = parseInt(target.dataset.id)
+	const index = parseInt(target.dataset.id || '0')
 	const prevIndex = index - 1
 	const nextIndex = index + 1
 	const prev = iRefs.value[prevIndex]
@@ -122,7 +122,7 @@ const onKeyDown = (e: KeyboardEvent) => {
 				triggerChange(vals)
 			} else if (prev) {
 				vals[prevIndex] = ''
-				inputs.value[prev].focus()
+				inputs.value[prev]?.focus()
 				values.value = vals
 				triggerChange(vals)
 			}
@@ -131,13 +131,13 @@ const onKeyDown = (e: KeyboardEvent) => {
 		case KEY_CODE.Left:
 			e.preventDefault()
 			if (prev) {
-				inputs.value[prev].focus()
+				inputs.value[prev]?.focus()
 			}
 			break
 		case KEY_CODE.Right:
 			e.preventDefault()
 			if (next) {
-				inputs.value[next].focus()
+				inputs.value[next]?.focus()
 			}
 			break
 		case KEY_CODE.Up:
@@ -164,7 +164,7 @@ watch(
 		const inputElement = document.getElementById(
 			`verification-input-${randomNumber}`
 		)
-		if (newValue === 2) {
+		if (newValue === 2 && inputElement) {
 			inputElement.autofocus = true
 		}
 	},

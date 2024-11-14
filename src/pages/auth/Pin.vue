@@ -8,7 +8,10 @@ const route = useRoute()
 const { setStorageItem, getStorageItem } = useWebAppCloudStorage()
 
 const pin = ref('')
+const settedPin = ref('')
 const isEnter = ref(false)
+const activeButton = ref<null | number>(null)
+let pressTimeout: NodeJS.Timeout | null = null
 
 const handleNumberClick = (number: string) => {
 	if (pin.value.length < 4) {
@@ -20,7 +23,7 @@ const handleDelete = () => {
 	pin.value = pin.value.slice(0, -1)
 }
 
-const handleKeyPress = e => {
+const handleKeyPress = (e: KeyboardEvent) => {
 	if (e.key >= '0' && e.key <= '9') {
 		handleNumberClick(e.key)
 	} else if (e.key === 'Backspace') {
@@ -28,23 +31,31 @@ const handleKeyPress = e => {
 	}
 }
 
-watch(pin, async () => {
+function press(num: number) {
+	if (pressTimeout) clearTimeout(pressTimeout)
+	activeButton.value = num
+	pressTimeout = setTimeout(() => {
+		activeButton.value = null
+		pressTimeout = null
+	}, 200)
+}
+
+watch(pin, () => {
 	if (pin.value.length !== 4) return
 
 	if (isEnter.value) {
-		const code = await getStorageItem('pinCode')
-		console.log(code)
-		if (pin.value === code) router.push('/home')
+		if (pin.value === settedPin.value) router.push('/home')
 	} else {
-		await setStorageItem('pinCode', pin.value)
+		setStorageItem('pinCode', pin.value)
 
 		router.push('/home')
 	}
 })
 
-onMounted(() => {
+onMounted(async () => {
 	if (route.path === '/auth/pin') {
 		isEnter.value = true
+		settedPin.value = (await getStorageItem('pinCode')) as string
 	}
 
 	window.addEventListener('keydown', handleKeyPress)
@@ -71,19 +82,28 @@ onUnmounted(() => {
 				:class="{ filled: index < pin.length }"
 			/>
 		</div>
-
-		<div class="numberPad">
+		{{ settedPin }}
+		<div
+			class="w-[288px] flex justify-center items-start flex-wrap gap-[24px] relative"
+		>
 			<button
 				v-for="number in [1, 2, 3, 4, 5, 6, 7, 8, 9, 0]"
 				:key="number"
-				class="numberButton"
+				class="font-semibold w-[80px] h-[80px] transition-all delay-[20ms] rounded-full text-[28px] leading-[34px] flex items-center justify-center"
+				:class="{ 'bg-neutral/20': activeButton === number }"
+				@touchstart="press(number)"
 				@click="handleNumberClick(number.toString())"
 			>
 				{{ number }}
 			</button>
 
-			<button class="deleteButton" @click="handleDelete">
-				<i class="icon-remove" />
+			<button
+				class="font-semibold w-[80px] h-[80px] transition-all delay-[20ms] rounded-full text-[28px] leading-[34px] flex items-center justify-center absolute right-0 bottom-0"
+				:class="{ 'bg-neutral/20': activeButton === -1 }"
+				@touchstart="press(-1)"
+				@click="handleDelete"
+			>
+				<i class="icon-remove text-[23px]" />
 			</button>
 		</div>
 	</div>
@@ -116,19 +136,7 @@ onUnmounted(() => {
 		@apply bg-[#3680FF];
 	}
 }
-
-.numberPad {
-	@apply w-[288px] flex justify-center items-start flex-wrap gap-[24px] relative;
-
-	.numberButton {
-		@apply font-semibold w-[80px] h-[80px] hover:bg-neutral/20 transition-all delay-100 rounded-full text-[28px] leading-[34px] flex items-center justify-center;
-	}
-
-	.deleteButton {
-		@apply font-semibold w-[80px] h-[80px] hover:bg-neutral/20 transition-all delay-100 rounded-full text-[28px] leading-[34px] flex items-center justify-center absolute right-0 bottom-0;
-		i {
-			@apply text-[23px];
-		}
-	}
+.active {
+	@apply bg-neutral/20;
 }
 </style>

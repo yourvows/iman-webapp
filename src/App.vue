@@ -12,9 +12,3 @@ setMainButtonParams({ color: '#3680FF', text_color: '#fff' })
 		<slot class="container" />
 	</component>
 </template>
-
-<style lang="postcss">
-body {
-	@apply bg-white text-black;
-}
-</style>

@@ -4,7 +4,7 @@ import { Header } from '@/components/Layout'
 import { computed, onMounted } from 'vue'
 import { useInvestmentsStore } from '@/stores/investments.ts'
 import { useRouter } from 'vue-router'
-import Goal from './components/Goal.vue'
+import { Goal, GoalsSkeleton } from './components'
 
 const investmentsStore = useInvestmentsStore()
 
@@ -38,14 +38,16 @@ onMounted(() => {
 			<!--				</div>-->
 			<!--			</div>-->
 		</Header>
-
-		<div class="body mt-4 container">
+		<div v-if="investmentsStore.loading" class="container">
+			<GoalsSkeleton v-for="i in 3" :key="i" />
+		</div>
+		<div v-else class="body my-4 container">
 			<div
 				class="flex flex-col space-y-3 items-start w-full"
 				v-if="investments.length"
 			>
 				<div class="flex w-full items-center font-semibold justify-between">
-					<h1 class="text-[#040415] text-xl leading-[25px]">Ваши вклады</h1>
+					<h1 class="text-xl leading-[25px]">Ваши вклады</h1>
 					<button
 						@click="router.push('/goal-select-plan')"
 						class="text-[#3680ff] text-[15px] leading-tight"
@@ -53,7 +55,12 @@ onMounted(() => {
 						+ Добавить
 					</button>
 				</div>
-				<Goal :investments />
+				<Goal
+					v-for="investment in investments"
+					:key="investment.guid"
+					:investment
+				/>
+				<!--				<pre class="text-[12px]">{{ investments[0] }}</pre>-->
 			</div>
 			<div v-else class="goalEmpty">
 				<div class="goalEmptyIcon">

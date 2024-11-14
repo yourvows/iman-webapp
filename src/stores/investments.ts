@@ -4,15 +4,17 @@ import { IInvestment } from '@/types/investment.type.ts'
 
 export const useInvestmentsStore = defineStore('investments', {
 	state: () => ({
+		loading: false,
 		investments: [] as IInvestment[]
 	}),
 	getters: {
 		GET_GOAL_BY_ID: state => (id: string) =>
-			state.investments.find(el => el.guid === id)
+			state.investments.find(el => el.guid === id) as IInvestment
 	},
 	actions: {
 		getInvestments(): Promise<IInvestment[]> {
 			return new Promise((resolve, reject) => {
+				this.loading = true
 				http
 					.get('/v1/investments')
 					.then(({ data }) => {
@@ -20,6 +22,7 @@ export const useInvestmentsStore = defineStore('investments', {
 						resolve(data)
 					})
 					.catch(err => reject(err))
+					.finally(() => (this.loading = false))
 			})
 		},
 		createInvestment(

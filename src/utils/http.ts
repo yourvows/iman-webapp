@@ -1,4 +1,3 @@
-// import { logout } from '@/auth/jwtService'
 import axios from 'axios'
 import { useWebAppCloudStorage } from 'vue-tg'
 import { Token, StatusCode } from '@/types/enums.ts'
@@ -7,7 +6,8 @@ let isAlreadyFetchingAccessToken = false
 
 let subscribers: ((accessToken: string) => void)[] = []
 
-const { setStorageItem, getStorageItem } = useWebAppCloudStorage()
+const { setStorageItem, getStorageItem, removeStorageItems } =
+	useWebAppCloudStorage()
 
 const axiosIns = axios.create({
 	baseURL: '/api',
@@ -26,9 +26,7 @@ axiosIns.interceptors.request.use(
 
 		return config
 	},
-	error => {
-		return Promise.reject(error)
-	}
+	error => Promise.reject(error)
 )
 
 //404 or 401 pages use this response
@@ -58,8 +56,7 @@ axiosIns.interceptors.response.use(
 				isAlreadyFetchingAccessToken &&
 				config.url === '/v1/investor/refresh-token'
 			) {
-				// logout()
-				console.log('logout')
+				logout()
 			}
 			const retryOriginalRequest = new Promise(resolve => {
 				addSubscriber((accessToken: string) => {
@@ -93,6 +90,11 @@ function onAccessTokenFetched(accessToken: string) {
 }
 function addSubscriber(callback: (accessToken: string) => void) {
 	subscribers.push(callback)
+}
+
+function logout() {
+	removeStorageItems([Token.AccessToken, Token.RefreshToken, 'pinCode'])
+	console.log('logout')
 }
 
 export default axiosIns

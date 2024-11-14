@@ -3,10 +3,15 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
+  "engines": {
+    "node": "20.11.1"
+  },
   "scripts": {
     "local": "ssh -R 80:localhost:5173 serveo.net",
-    "dev": "vite",
-    "build": "vue-tsc -b && vite build",
+    "dev": " NODE_ENV=development vite --mode development",
+    "dev:prod": " NODE_ENV=production vite --mode production",
+    "build:prod": "NODE_ENV=production vue-tsc -b && vite build --mode production",
+    "build:dev": "NODE_ENV=development vue-tsc -b && vite build --mode development",
     "preview": "vite preview"
   },
   "dependencies": {

@@ -2,6 +2,13 @@
 
 @import "@/icomoon/style.css";
 
+:root{
+    background-color: #F5F7FA;
+    color: #040415;
+}
+
+
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;

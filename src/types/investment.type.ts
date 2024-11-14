@@ -9,7 +9,17 @@ export interface IInvestment {
 		start_balance: number
 		month: string
 	}
-	bonuses: []
+	bonuses: {
+		title: {
+			ru: string
+			uz: string
+			en: string
+		}
+
+		max_value: number
+		current_value: number
+		bonus_type: string
+	}[]
 	strategy_id: string
 	tarif_id: string
 	goal: {

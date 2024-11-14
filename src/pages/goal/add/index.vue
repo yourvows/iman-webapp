@@ -64,7 +64,7 @@ const router = useRouter()
 	@apply flex flex-col gap-1;
 
 	h3 {
-		@apply text-[#040415] font-semibold text-left leading-[20px];
+		@apply font-semibold text-left leading-[20px];
 	}
 	p {
 		@apply font-medium text-left text-[13px] leading-[18px] text-[#9aa3b3] max-w-[283px];

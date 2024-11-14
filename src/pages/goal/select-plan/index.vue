@@ -238,7 +238,7 @@ onMounted(async () => {
 			<span>Открывая вклад, вы соглашаетесь с </span>
 			<span class="condition">условиями</span>
 		</div>
-		<BackButton @click="() => router.push('/goal-add')" />
+		<BackButton @click="() => router.push('/home')" />
 		<MainButton text="Открыть вклад" @click="createGoal" />
 	</div>
 </template>
@@ -306,7 +306,6 @@ onMounted(async () => {
 	@apply flex flex-col gap-1;
 
 	h3 {
-		color: #040415;
 		font-weight: 600;
 		font-size: 16px;
 		line-height: 20px;
@@ -332,7 +331,6 @@ onMounted(async () => {
 	font-weight: 600;
 	line-height: 21px;
 	text-align: center;
-	color: #040415;
 }
 
 .contentFormBlock {

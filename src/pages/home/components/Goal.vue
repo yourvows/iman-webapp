@@ -3,18 +3,27 @@ import { Currency } from '@/types/strategies.type.ts'
 import { Card } from '@/components/Base'
 import { IInvestment } from '@/types/investment.type.ts'
 import { formatMoney } from '@/utils'
+import { onMounted } from 'vue'
+import { useSharedStore } from '@/stores/shared.ts'
 
-defineProps<{
-	investments: IInvestment[]
+const props = defineProps<{
+	investment: IInvestment
 }>()
+
+const sharedStore = useSharedStore()
+
+const getApproximateUSD = (sum: number) =>
+	Number((sum / sharedStore.usd_rate).toFixed())
+
+onMounted(() => {
+	if (props.investment.currency === Currency.USD) {
+		sharedStore.getUSDRate()
+	}
+})
 </script>
 
 <template>
-	<Card
-		class="w-full bg-white"
-		v-for="(investment, index) in investments"
-		:key="investment.guid"
-	>
+	<Card class="w-full bg-white">
 		<RouterLink
 			:to="`/goal/${investment.guid}`"
 			class="border-b pb-4 flex justify-between items-center gap-3"
@@ -28,15 +37,23 @@ defineProps<{
 					<i class="icon-suitcase text-blue" />
 				</div>
 				<div>
-					<h3 class="text-[#040415] text-lg font-semibold leading-[23px]">
-						{{ formatMoney(investment.goal.amount, 'ru-RU') }}
-					</h3>
+					<div class="text-lg font-semibold leading-[23px]">
+						{{ formatMoney(investment.investment_amount, 'ru-RU') }}
+						<span
+							v-if="investment.currency === Currency.USD"
+							class="text-neutral text-[13px] font-semibold leading-[18px]"
+						>
+							~{{
+								formatMoney(
+									getApproximateUSD(investment.investment_amount),
+									'ru-RU',
+									Currency.USD
+								)
+							}}
+						</span>
+					</div>
 					<p class="text-neutral text-[13px] font-medium leading-[18px]">
-						{{
-							investment.goal.title.length
-								? investment.goal.title
-								: `Вклад ${index + 1}`
-						}}
+						{{ investment.goal.title.length ? investment.goal.title : `Вклад` }}
 					</p>
 				</div>
 			</div>
@@ -47,7 +64,7 @@ defineProps<{
 		>
 			<div class="flex items-center gap-2">
 				<p class="text-neutral font-medium">Текущий месяц</p>
-				<p class="text-[#040415] font-semibold">
+				<p class="font-semibold">
 					+
 					{{ formatMoney(investment.last_month_profit.amount, 'ru-RU') }}
 				</p>
