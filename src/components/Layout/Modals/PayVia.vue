@@ -11,7 +11,7 @@ import { ref } from 'vue'
 
 const investorStore = useInvestorStore()
 
-const activeCard = ref(investorStore.cards[0].guid)
+const activeCard = ref()
 </script>
 
 <template>
@@ -48,7 +48,10 @@ const activeCard = ref(investorStore.cards[0].guid)
 						</div>
 						<i class="icon-chevron-right text-neutral/50" />
 					</RouterLink>
-					<RadioGroup v-model="activeCard">
+					<RadioGroup
+						v-model="activeCard"
+						:default-value="investorStore.cards[0]?.guid"
+					>
 						<div
 							class="flex items-center justify-between"
 							v-for="card in investorStore.cards"

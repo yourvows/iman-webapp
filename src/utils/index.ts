@@ -1,4 +1,7 @@
 import { Currency, ITariff } from '@/types/strategies.type.ts'
+import { Token } from '@/types/enums.ts'
+import { useWebAppCloudStorage } from 'vue-tg'
+const { removeStorageItems } = useWebAppCloudStorage()
 
 /**
  * Masks a phone number by replacing the last two parts with asterisks.
@@ -46,4 +49,9 @@ export function formatMoney(
 		maximumFractionDigits: 0
 	}).format(amount)
 	return currencyLabel === Currency.UZS ? `${currency} сум` : `$${currency}`
+}
+
+export function logout() {
+	console.log('logout')
+	removeStorageItems([Token.AccessToken, Token.RefreshToken, 'pinCode'])
 }

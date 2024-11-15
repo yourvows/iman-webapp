@@ -1,13 +1,13 @@
 import axios from 'axios'
 import { useWebAppCloudStorage } from 'vue-tg'
 import { Token, StatusCode } from '@/types/enums.ts'
+import { logout } from '@/utils'
 
 let isAlreadyFetchingAccessToken = false
 
 let subscribers: ((accessToken: string) => void)[] = []
 
-const { setStorageItem, getStorageItem, removeStorageItems } =
-	useWebAppCloudStorage()
+const { setStorageItem, getStorageItem } = useWebAppCloudStorage()
 
 const axiosIns = axios.create({
 	baseURL: '/api',
@@ -90,11 +90,6 @@ function onAccessTokenFetched(accessToken: string) {
 }
 function addSubscriber(callback: (accessToken: string) => void) {
 	subscribers.push(callback)
-}
-
-function logout() {
-	removeStorageItems([Token.AccessToken, Token.RefreshToken, 'pinCode'])
-	console.log('logout')
 }
 
 export default axiosIns

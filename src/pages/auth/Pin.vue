@@ -1,16 +1,26 @@
 <script setup lang="ts">
 import { onMounted, onUnmounted, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { useWebAppCloudStorage } from 'vue-tg'
+import {
+	useWebAppCloudStorage,
+	useWebAppHapticFeedback,
+	useWebAppBiometricManager,
+	BiometricManager
+} from 'vue-tg'
 
 const router = useRouter()
 const route = useRoute()
 const { setStorageItem, getStorageItem } = useWebAppCloudStorage()
+const { requestBiometricAccess, authenticateBiometric } =
+	useWebAppBiometricManager()
+const { selectionChanged } = useWebAppHapticFeedback()
 
 const pin = ref('')
-const settedPin = ref('')
+const setPin = ref('')
+const isWrong = ref(false)
 const isEnter = ref(false)
 const activeButton = ref<null | number>(null)
+const payload = ref(false)
 let pressTimeout: NodeJS.Timeout | null = null
 
 const handleNumberClick = (number: string) => {
@@ -40,22 +50,37 @@ function press(num: number) {
 	}, 200)
 }
 
+watch(payload, () => {
+	if (payload.value) router.push('/home')
+})
+
 watch(pin, () => {
+	selectionChanged()
+	isWrong.value = false
 	if (pin.value.length !== 4) return
 
 	if (isEnter.value) {
-		if (pin.value === settedPin.value) router.push('/home')
+		if (pin.value === setPin.value) router.push('/home')
+		else isWrong.value = true
 	} else {
 		setStorageItem('pinCode', pin.value)
 
 		router.push('/home')
 	}
 })
+function handleInit() {
+	if (route.path === '/auth/pin') {
+		requestBiometricAccess({ reason: 'Enter PIN' }, () => {})
+		authenticateBiometric({ reason: 'Enter PIN' }, isAccessGranted => {
+			payload.value = isAccessGranted
+		})
+	}
+}
 
 onMounted(async () => {
 	if (route.path === '/auth/pin') {
 		isEnter.value = true
-		settedPin.value = (await getStorageItem('pinCode')) as string
+		setPin.value = (await getStorageItem('pinCode')) as string
 	}
 
 	window.addEventListener('keydown', handleKeyPress)
@@ -74,23 +99,23 @@ onUnmounted(() => {
 			Этот PIN-код будет использоваться <br />для входа в приложение
 		</p>
 		<p v-else class="subtitle">Для входа введите придуманный ранее код</p>
-		<div class="pinIndicators">
+		<div class="pinIndicators" :class="{ 'animate-shake': isWrong }">
 			<div
 				v-for="(_, index) in Array(4)"
 				:key="index"
 				class="pinIndicator"
-				:class="{ filled: index < pin.length }"
+				:class="{ filled: index < pin.length, '!bg-[#F93C65]': isWrong }"
 			/>
 		</div>
-		{{ settedPin }}
+
 		<div
 			class="w-[288px] flex justify-center items-start flex-wrap gap-[24px] relative"
 		>
 			<button
 				v-for="number in [1, 2, 3, 4, 5, 6, 7, 8, 9, 0]"
 				:key="number"
-				class="font-semibold w-[80px] h-[80px] transition-all delay-[20ms] rounded-full text-[28px] leading-[34px] flex items-center justify-center"
-				:class="{ 'bg-neutral/20': activeButton === number }"
+				class="font-semibold w-[80px] h-[80px] bg-neutral/20 transition-all delay-[20ms] rounded-full text-[28px] leading-[34px] flex items-center justify-center"
+				:class="{ 'bg-neutral/50': activeButton === number }"
 				@touchstart="press(number)"
 				@click="handleNumberClick(number.toString())"
 			>
@@ -99,13 +124,32 @@ onUnmounted(() => {
 
 			<button
 				class="font-semibold w-[80px] h-[80px] transition-all delay-[20ms] rounded-full text-[28px] leading-[34px] flex items-center justify-center absolute right-0 bottom-0"
-				:class="{ 'bg-neutral/20': activeButton === -1 }"
+				:class="[
+					{
+						'bg-neutral/50': activeButton === -1,
+						'opacity-0 touch-none': !pin.length
+					}
+				]"
 				@touchstart="press(-1)"
 				@click="handleDelete"
 			>
 				<i class="icon-remove text-[23px]" />
 			</button>
+			<button
+				v-if="isEnter"
+				class="font-semibold w-[80px] h-[80px] transition-all delay-[20ms] rounded-full text-[28px] leading-[34px] flex items-center justify-center absolute left-0 bottom-0"
+				:class="[
+					{
+						'bg-neutral/50': activeButton === -2
+					}
+				]"
+				@touchstart="press(-2)"
+				@click="handleInit"
+			>
+				<i class="icon-face-id text-[23px]" />
+			</button>
 		</div>
+		<BiometricManager @init="handleInit" />
 	</div>
 </template>
 <style lang="postcss" scoped>
@@ -135,8 +179,5 @@ onUnmounted(() => {
 	&.filled {
 		@apply bg-[#3680FF];
 	}
-}
-.active {
-	@apply bg-neutral/20;
 }
 </style>

@@ -23,6 +23,11 @@ const routes: Readonly<RouteRecordRaw[]> = [
 		name: 'Home',
 		component: () => import('@/pages/home/index.vue')
 	},
+	{
+		path: '/verify',
+		name: 'Verify',
+		component: () => import('@/pages/verification/index.vue')
+	},
 	...goalRoutes
 ]
 

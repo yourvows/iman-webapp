@@ -9,8 +9,14 @@ export const useInvestmentsStore = defineStore('investments', {
 	}),
 	getters: {
 		GET_GOAL_BY_ID: state => (id: string) =>
-			state.investments.find(el => el.guid === id) as IInvestment
+			state.investments.find(el => el.guid === id) as IInvestment,
+		GET_TOTAL_PROFIT: state => {
+			return state.investments.reduce((acc, el) => {
+				return acc + el.investment_amount
+			}, 0)
+		}
 	},
+
 	actions: {
 		getInvestments(): Promise<IInvestment[]> {
 			return new Promise((resolve, reject) => {

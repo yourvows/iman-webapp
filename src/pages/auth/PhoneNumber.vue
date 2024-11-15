@@ -2,7 +2,6 @@
 import { ref } from 'vue'
 import { useAuthStore } from '@/stores/auth'
 import { vMaska } from 'maska/vue'
-import { Icon } from '@/components/Base'
 import { MainButton } from 'vue-tg'
 
 const emit = defineEmits<{
@@ -50,7 +49,7 @@ async function sendOtpRequest(number: string) {
 			Если же у вас нет номера, но вы <br />можете войти по электронной почте
 		</p>
 		<div class="numberInput">
-			<p><Icon icon="flag-uz" />+998</p>
+			<p><img class="size-6" src="@/assets/icons/uzs.svg" alt="uz" />+998</p>
 			<input
 				v-maska="'## ### ## ##'"
 				v-model="authStore.phoneNumber"

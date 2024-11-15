@@ -235,6 +235,6 @@ const pasteDigits = (e: ClipboardEvent) => {
 
 <style lang="postcss" scoped>
 input {
-	@apply caret-[#3680FF] focus:border focus:border-[#3680FF]/50 w-16 h-full text-center font-semibold text-2xl leading-8 rounded-[16px] bg-[#F2F3F5] border-none outline-none;
+	@apply caret-[#3680FF] focus:border focus:border-[#3680FF]/50 w-[58px] h-16 text-center font-semibold text-2xl leading-8 rounded-[16px] bg-[#F2F3F5] border-none outline-none;
 }
 </style>

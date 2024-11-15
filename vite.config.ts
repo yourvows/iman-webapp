@@ -4,6 +4,7 @@ import svgLoader from 'vite-svg-loader'
 import dotenv from 'dotenv'
 import autoprefixer from 'autoprefixer'
 import tailwind from 'tailwindcss'
+import terminal from 'vite-plugin-terminal'
 import { fileURLToPath } from 'node:url'
 
 dotenv.config()
@@ -23,9 +24,11 @@ export default ({ mode }: { mode: string }) => {
 			vue(),
 			svgLoader({
 				defaultImport: 'url'
-			})
+			}),
+			terminal({ console: 'terminal' })
 		],
 		server: {
+			host: true,
 			proxy: {
 				'/api': {
 					target: API_URL,

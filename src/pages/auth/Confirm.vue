@@ -11,7 +11,7 @@ const emit = defineEmits<{
 
 const authStore = useAuthStore()
 
-const secondsLeft = ref(60)
+const secondsLeft = ref(2)
 const isOtpInvalid = computed(() => authStore.otpInfo.otp_invalid)
 
 const disableError = () => (authStore.otpInfo.otp_invalid = false)
@@ -62,15 +62,15 @@ onMounted(() => {
 		<p v-if="secondsLeft > 0" class="resend">
 			Отправить повторно через 00:{{ secondsLeft }}
 		</p>
-		<a v-else href="#!" class="backBtn" type="button"
-			>Вернуться назад к заполнению номера</a
-		>
+		<a v-else @click="emit('action', 'back')" class="backBtn" type="button">
+			Вернуться назад к заполнению номера
+		</a>
 
 		<div class="helpContainer">
 			<button class="helpButton">Проблемы со входом?</button>
 		</div>
+		<BackButton @click="goBack" />
 	</div>
-	<BackButton @click="goBack" />
 </template>
 
 <style scoped lang="postcss">
@@ -99,15 +99,9 @@ onMounted(() => {
 }
 
 .helpContainer {
-	@apply absolute bottom-[20px];
-
 	button {
 		@apply text-[#04041566] font-medium text-[14px] leading-6;
 	}
-}
-
-.backButton {
-	@apply w-[30px] h-[30px] border-none outline-none top-[24px] left-[24px];
 }
 
 .backBtn {

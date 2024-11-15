@@ -5,6 +5,7 @@ import { computed, onMounted } from 'vue'
 import { useInvestmentsStore } from '@/stores/investments.ts'
 import { useRouter } from 'vue-router'
 import { Goal, GoalsSkeleton } from './components'
+import { formatMoney } from '@/utils'
 
 const investmentsStore = useInvestmentsStore()
 
@@ -20,7 +21,10 @@ onMounted(() => {
 	<div class="wrapper bg-neutral/10">
 		<Header>
 			<div class="content">
-				<h3 class="contentBalance">0 <span>сум</span></h3>
+				<h3 class="contentBalance">
+					{{ formatMoney(investmentsStore.GET_TOTAL_PROFIT, 'ru-RU') }}
+					<!--					<span>сум</span>-->
+				</h3>
 				<div class="contentProfit">
 					<h3 class="contentProfitTitle">
 						Нет вложений, чтобы начислять прибыль
@@ -38,13 +42,17 @@ onMounted(() => {
 			<!--				</div>-->
 			<!--			</div>-->
 		</Header>
+		<RouterLink to="/verify" class="btn btn-primary"
+			>Проверить документ
+		</RouterLink>
+
 		<div v-if="investmentsStore.loading" class="container">
 			<GoalsSkeleton v-for="i in 3" :key="i" />
 		</div>
 		<div v-else class="body my-4 container">
 			<div
 				class="flex flex-col space-y-3 items-start w-full"
-				v-if="investments.length"
+				v-if="investments.length !== 0"
 			>
 				<div class="flex w-full items-center font-semibold justify-between">
 					<h1 class="text-xl leading-[25px]">Ваши вклады</h1>

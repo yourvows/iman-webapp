@@ -1,8 +1,8 @@
 <template>
 	<RouterView v-slot="{ Component }">
 		<Transition
-			enter-active-class="transition-opacity duration-300 ease-in"
-			leave-active-class="transition-opacity duration-300 ease-in"
+			enter-active-class="transition-opacity duration-100 ease-in"
+			leave-active-class="transition-opacity duration-100 ease-in"
 			leave-to-class="opacity-0"
 			enter-from-class="opacity-0"
 			name="fade"

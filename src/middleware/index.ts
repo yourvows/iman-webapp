@@ -10,7 +10,6 @@ export async function loadLayoutMiddleware(
 	next: NavigationGuardNext
 ) {
 	try {
-		console.log(to)
 		const layout = to.meta.layout || 'Default'
 		const layoutComponent = await import(`@/layouts/${layout}.vue`)
 		to.meta.layoutComponent = layoutComponent.default
